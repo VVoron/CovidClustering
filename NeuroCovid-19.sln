@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33209.295
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuroCovid19", "FirstWPF\NeuroCovid19.csproj", "{D03CDD61-3779-47A2-91E2-0F3301B4AA98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuroCovid19", "NeuroCovid-19\NeuroCovid19.csproj", "{D03CDD61-3779-47A2-91E2-0F3301B4AA98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

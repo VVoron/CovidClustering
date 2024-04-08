@@ -1,0 +1,171 @@
+﻿<Window x:Class="NeuroCovid19.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NeuroCovid19"
+        xmlns:model="clr-namespace:NeuroCovid19.MVVM.Model"
+        xmlns:viewModel="clr-namespace:NeuroCovid19.MVVM.ViewModel" 
+                        d:DataContext="{d:DesignInstance Type=viewModel:MainViewModel}"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        MinHeight="450" 
+        MinWidth="800" 
+        Height="500" 
+        Width="900"
+        WindowStyle="None"
+        SizeChanged="Window_SizeChanged">
+    <Window.Style>
+        <Style>
+            <Setter Property="WindowChrome.WindowChrome">
+                <Setter.Value>
+                    <WindowChrome CaptionHeight="0"
+                              CornerRadius="20"
+                              GlassFrameThickness="0"
+                              NonClientFrameEdges="None"
+                              ResizeBorderThickness="5"
+                              UseAeroCaptionButtons="False" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Style>
+    <Window.DataContext>
+        <viewModel:MainViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Name="ButtonsColumn" Width="220"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70px"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Column="0"
+              Grid.Row="0"
+              Background="#26253a">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Image Source="/Resources/icon.png" 
+                   VerticalAlignment="Center"
+                   Height="50"/>
+            <TextBlock x:Name="Home"
+                       Text="Covid-19"
+                       Grid.Column="1" 
+                       VerticalAlignment="Center"
+                       TextAlignment="Center"
+                       FontSize="16"
+                       Foreground="White" Margin="0,0,67,0"/>
+        </Grid>
+        <TextBlock x:Name="MainLabel" 
+                   Background="#009688" 
+                   Grid.Row="0" Grid.Column="1" 
+                   Text="{Binding PageTitle}"
+                   TextAlignment="Center"
+                   Padding="20px"
+                   FontSize="16"
+                   Foreground="White"
+                   MouseDown="MovingWindow"/>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Grid.Row="0" Grid.Column="1"
+                    Height="20px"
+                    VerticalAlignment="Top"
+                    Margin="0 10 0 0">
+            <Ellipse Fill="Green" 
+                     Height="15"
+                     Width="15"
+                     Margin="0 0 10 0"
+                     ToolTip="Свернуть"
+                     MouseDown="MinimizeWindow">
+                <Ellipse.Style>
+                    <Style TargetType="Ellipse">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Ellipse.Style>
+            </Ellipse>
+            <Ellipse Fill="Yellow" 
+                     Height="15"
+                     Width="15"
+                     Margin="0 0 10 0"
+                     ToolTip="Развернуть"
+                     MouseDown="ResizeMinMaxWindow">
+                <Ellipse.Style>
+                    <Style TargetType="Ellipse">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Ellipse.Style>
+            </Ellipse>
+            <Ellipse Fill="Red" 
+                     Height="15"
+                     Width="15"
+                     Margin="0 0 10 0"
+                     ToolTip="Закрыть"
+                     MouseDown="CloseWindow">
+                <Ellipse.Style>
+                    <Style TargetType="Ellipse">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Ellipse.Style>
+            </Ellipse>
+
+        </StackPanel>
+        <StackPanel Name="Buttons"
+                    Grid.Row="1" 
+                    Grid.Column="0" 
+                  Background="#32334c">
+            <RadioButton Style="{StaticResource MenuBtnTheme}"
+                         Content="Исходные данные"
+                         IsChecked="True"
+                         model:BtnsImages.ImageSource="/Resources/Data.png"
+                         Command="{Binding InputDataViewCommand}">
+            </RadioButton>
+            <RadioButton Content="Процедура кластеризации"
+                         Style="{StaticResource MenuBtnTheme}"
+                         model:BtnsImages.ImageSource="/Resources/Settings.png"
+                         Command="{Binding ClasterisationInfoViewCommand}"></RadioButton>
+            <RadioButton Content="Кластеры, информация о них"
+                         model:BtnsImages.ImageSource="/Resources/Results.png"
+                         Style="{StaticResource MenuBtnTheme}"
+                         Command="{Binding OutputDataViewCommand}"></RadioButton>
+            <RadioButton Content="Диаграммы"
+                         model:BtnsImages.ImageSource="/Resources/Charts.png"
+                         Style="{StaticResource MenuBtnTheme}"
+                         Command="{Binding ClasterVisualisationViewCommand}"></RadioButton>
+            <RadioButton Content="Графическое преставление"
+                         model:BtnsImages.ImageSource="/Resources/Dots.png"
+                         Style="{StaticResource MenuBtnTheme}"
+                         Command="{Binding ClastersGraphInterpViewCommand}"></RadioButton>
+            <RadioButton Content="Динамика изменений"
+                         model:BtnsImages.ImageSource="/Resources/Graph.png"
+                         Style="{StaticResource MenuBtnTheme}"
+                         Command="{Binding DynamicGraphsViewCommand}"></RadioButton>
+            <RadioButton Content="Сохранение/Загрузка"
+                         model:BtnsImages.ImageSource="/Resources/Disk.png"
+                         Style="{StaticResource MenuBtnTheme}"
+                         Command="{Binding UploadViewCommand}"></RadioButton>
+        </StackPanel>
+
+        <ContentControl Grid.Row="1"
+                        Grid.Column="1"
+                        Content="{Binding CurrentView, IsAsync=True}"/>
+        <ContentControl Grid.Row="1"
+                        Grid.Column="1"
+                        Opacity="0.35"
+                        Content="{Binding Loader}"/>
+    </Grid>
+</Window>
