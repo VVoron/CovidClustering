@@ -6,11 +6,16 @@ using NeuroCovid19.MVVM.Model;
 using NeuroCovid19.MVVM.View;
 using NeuroCovid19.Providers;
 using NeuroCovid19.Providers.ClasterisationProviders;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
+using MessageBox = System.Windows.MessageBox;
 
 namespace NeuroCovid19.MVVM.ViewModel
 {
@@ -20,6 +25,7 @@ namespace NeuroCovid19.MVVM.ViewModel
         public RelayCommand RelaySelfStudy { get; set; }
         public RelayCommand RelayKohanenWithW { get; set; }
         public RelayCommand ChangeInitDataByClaster { get; set; }
+        public RelayCommand GetExcelOutput { get; set; }
         private DataCOVIDEars[]? _data { get; set; }
         public object Load
         {
@@ -125,7 +131,6 @@ namespace NeuroCovid19.MVVM.ViewModel
 
         private List<PropertiesModel> _properties = new List<PropertiesModel>();
         private double[,] _allNormalizeData { get; set; }
-        private double[,] _wCoefs { get; set; }
         private List<DataCOVIDEars> DataWithSkipping { get; set; }
         private int doFirstOfAll()
         {
@@ -297,6 +302,39 @@ namespace NeuroCovid19.MVVM.ViewModel
             OnPropertyChanged(nameof(IsDBScan));
         }
 
+        private void GetOutputDataToExcel()
+        {
+            if (Load == null)
+                Load = new Loading();
+
+            var columns = new ClasterisationProvider().СolomnsData();
+            var fileName = _clasterComboBox[_selectedClaster];
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog() { Filter = "Excel Workbook|*.xls*", ValidateNames = true, FileName = fileName })
+            {
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    ExcelPackage excelFile = new ExcelPackage();
+                    excelFile.Workbook.Properties.Author = "NeuroNet";
+                    excelFile.Workbook.Properties.Title = fileName;
+                    excelFile.Workbook.Properties.Created = DateTime.Now;
+                    var worksheet = excelFile.Workbook.Worksheets.Add(fileName);
+                    for (int i = 0; i < columns.Count; i++)
+                        worksheet.Cells[1, i + 1].Value = columns[i];
+                    int k = 2;
+                    foreach (DataCOVIDEars item in _data)
+                    {
+                        var info = item.GetAllData();
+                        for (int i = 0; i < info.Count(); i++)
+                            worksheet.Cells[k, i + 1].Value = info[i].Replace(',', '.');
+                        k++;
+                    }
+                    excelFile.SaveAs(new FileInfo(saveFileDialog.FileName + ".xlsx"));
+                    MessageBox.Show("Данные были успешно сохранены в файл\n" + saveFileDialog.FileName);
+                }
+            }
+            Load = null;
+        }
+
         public OutputViewModel() {
             SelectedClasterisation = (int)App.ContextOfData.SelectedClasterisation;
             ClasterisationComboBox = new List<string>() { "Кохонен", "DBScan" };
@@ -344,8 +382,11 @@ namespace NeuroCovid19.MVVM.ViewModel
                         break;
                 }
             });
-        }
 
-        private object locker = new object();
+            GetExcelOutput = new RelayCommand(x =>
+            {
+                GetOutputDataToExcel();
+            });
+        }
     }
 }

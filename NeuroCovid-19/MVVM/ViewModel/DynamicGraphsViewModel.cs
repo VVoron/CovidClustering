@@ -90,9 +90,9 @@ namespace NeuroCovid19.MVVM.ViewModel
         {
             if (_selectedItem == null)
                 return;
-            var items = App.ContextOfData.Childrens_Info.Where(x => !string.IsNullOrEmpty(x._name) && x._name.Contains(_selectedItem))
-                                                        .DistinctBy(x => x._time_observation)
-                                                        .OrderBy(x => x._time_observation).ToList();
+            var items = App.ContextOfData.Childrens_Info.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains(_selectedItem))
+                                                        .DistinctBy(x => x.Time_observation)
+                                                        .OrderBy(x => x.Time_observation).ToList();
             var count = new int[_fullPropsList.Count];
             for (int i = 0; i < _fullPropsList.Count; i++)
                 foreach (var item in items)
@@ -113,9 +113,9 @@ namespace NeuroCovid19.MVVM.ViewModel
         private void PlotNewGraph()
         {
             _series = new SeriesCollection();
-            var items = App.ContextOfData.Childrens_Info.Where(x => x._name == _selectedItem)
-                                                        .DistinctBy(x => x._time_observation)
-                                                        .OrderBy(x => x._time_observation).ToList();
+            var items = App.ContextOfData.Childrens_Info.Where(x => x.Name == _selectedItem)
+                                                        .DistinctBy(x => x.Time_observation)
+                                                        .OrderBy(x => x.Time_observation).ToList();
             var selectedProp = _fullPropsList.IndexOf(_selectedProp);
             var values = items.Select(x => x.GetPropertyValueById(selectedProp + 9)).Where(x => !Double.IsNaN(x)).ToArray();
             var points = new LineSeries
@@ -134,9 +134,9 @@ namespace NeuroCovid19.MVVM.ViewModel
         public DynamicGraphsViewModel()
         {
             _fullPropsList = new ClasterisationProvider().PropertiesData().Skip(6).ToList();
-            _fullItemsList = App.ContextOfData.Childrens_Info.Where(x => !string.IsNullOrEmpty(x._name))
-                                                             .GroupBy(x => x._name)
-                                                             .Where(group => group.Select(x => x._time_observation).Distinct().Count() > 2)
+            _fullItemsList = App.ContextOfData.Childrens_Info.Where(x => !string.IsNullOrEmpty(x.Name))
+                                                             .GroupBy(x => x.Name)
+                                                             .Where(group => group.Select(x => x.Time_observation).Distinct().Count() > 2)
                                                              .Select(group => group.Key).ToList();
             ItemsList = new ObservableCollection<string>(_fullItemsList);
         }

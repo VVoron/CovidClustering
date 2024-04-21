@@ -79,7 +79,7 @@
                                   SelectedIndex="{Binding SelectedClaster}"
                                   SelectionChanged="ComboBox_SelectionChanged"/>
                 <Button Content="Сделать выборку исходной" Command="{Binding ChangeInitDataByClaster}"/>
-                <Button Content="Выгрузить данные в файл"/>
+                <Button Content="Выгрузить данные в файл" Command="{Binding GetExcelOutput}"/>
             </ToolBar>
         </Grid>
     </Grid>
