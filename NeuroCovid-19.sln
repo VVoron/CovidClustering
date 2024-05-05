@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33209.295
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuroCovid19", "NeuroCovid-19\NeuroCovid19.csproj", "{D03CDD61-3779-47A2-91E2-0F3301B4AA98}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{B09E3096-EAEC-414E-AB94-561BD652B697}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,8 @@ Global
 		{D03CDD61-3779-47A2-91E2-0F3301B4AA98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D03CDD61-3779-47A2-91E2-0F3301B4AA98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D03CDD61-3779-47A2-91E2-0F3301B4AA98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B09E3096-EAEC-414E-AB94-561BD652B697}.Debug|Any CPU.ActiveCfg = Debug
+		{B09E3096-EAEC-414E-AB94-561BD652B697}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
