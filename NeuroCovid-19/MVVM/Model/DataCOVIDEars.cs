@@ -277,26 +277,40 @@ namespace NeuroCovid19.MVVM.Model
             ThreeValuesToColorConverter converter = new ThreeValuesToColorConverter();
             int numCol = 0;
             double incorrect = 0;
-            bool first = columnsToCheck[0] <= 41;
             foreach (var col in columnsToCheck)
             {
-                var data = isForKSVP ? new object[] { this.GetPropertyValueById(col), Time_gestagration, Time_observation, first ? KSVP_r_40 : KSVP_l_40, first ? KSVP_r_60 : KSVP_l_60 } :
-                                       new object[] { this.GetPropertyValueById(col), Time_gestagration, Time_observation };
-                SolidColorBrush res = (SolidColorBrush)converter.Convert(data, typeof(Brushes), col, CultureInfo.CurrentCulture);
-                if (res != Brushes.Transparent)
+                var colValue = this.GetPropertyValueById(col);
+                if (!isForKSVP)
                 {
+                    var data = new object[] { colValue, Time_gestagration, Time_observation };
+                    SolidColorBrush res = (SolidColorBrush)converter.Convert(data, typeof(Brushes), col, CultureInfo.CurrentCulture);
+                    if (res != Brushes.Transparent)
+                    {
+                        numCol++;
+                        var a = res == new SolidColorBrush(Color.FromArgb(255, 255, 55, 55));
+                        if (res == Brushes.Red || res == converter.MoreSmaller || res == converter.MoreBigger)
+                            incorrect += 1.0;
+                        if (!isForKSVP && (res == converter.SuchSmaller || res == converter.SuchBigger))
+                            incorrect += 0.5;
+                    }
+                }
+                else
+                {
+                    if (double.IsNaN(colValue))
+                        continue;
+
+                    if (colValue == 0 && numCol == 0)
+                        incorrect++;
+                    else if (colValue == 0 && numCol > 0 && incorrect > 0)
+                        incorrect++;
+
                     numCol++;
-                    var a = res == new SolidColorBrush(Color.FromArgb(255, 255, 55, 55));
-                    if (res == Brushes.Red || res == converter.MoreSmaller || res == converter.MoreBigger)
-                        incorrect += 1.0;
-                    if (!isForKSVP && (res == converter.SuchSmaller || res == converter.SuchBigger))
-                        incorrect += 0.5;
                 }
             }
 
             if (numCol != 0)
             {
-                return Math.Abs((double)incorrect / (double)numCol);
+                return Math.Round(Math.Abs((double)incorrect / (double)numCol), 2);
             }
 
             return Double.NaN;

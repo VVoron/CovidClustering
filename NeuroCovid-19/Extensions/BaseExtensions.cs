@@ -20,7 +20,7 @@ namespace NeuroCovid19.Extensions
             return Convert.ToDouble(propertyInfo.GetValue(obj));
         }
 
-        public static T[] GetArrayLine<T>(T[,] array, int lineIndex)
+        public static T[] GetArrayLine<T>(this T[,] array, int lineIndex)
         {
             T[] line = new T[array.GetLength(1)];
             for (int i = 0; i < array.GetLength(1); i++)

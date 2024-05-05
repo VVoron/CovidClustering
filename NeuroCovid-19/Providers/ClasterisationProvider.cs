@@ -315,7 +315,7 @@ namespace NeuroCovid19.Providers
                         return new double[] { 6.0, 10.0 };
                 }
             }
-            if (indexProp >= 29 && indexProp <= 37)
+            if (indexProp >= 29 && indexProp <= 37 && !colomnsToCheck[2].Contains(indexProp))
                 return new double[] { 0.0001, 25.001 };
             if (colomnsToCheck[2].Contains(indexProp))
                 return new double[] { 0, 0.5 };

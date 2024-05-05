@@ -33,7 +33,7 @@ namespace NeuroCovid19.MVVM.View
 
             var clExt = new ClasterisationProvider();
 
-            if (index < 41)
+            if (index < 47)
             {
                 foreach (var list in clExt.colomnsToCheck)
                 {

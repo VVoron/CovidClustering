@@ -162,7 +162,10 @@ namespace NeuroCovid19.MVVM.ViewModel
         }
         private async Task SelfStudy()
         {
-            int countProps = doFirstOfAll();
+            doFirstOfAll();
+
+            if (_allNormalizeData == null || _allNormalizeData.Length == 0)
+                return;
 
             IClasterisation clasterisation = null;
             switch ((Clasterisation)_selectedClasterisaton)
