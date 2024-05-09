@@ -24,6 +24,12 @@ namespace NeuroCovid19.MVVM.View
 
         private void AvarageGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
+            DataGridTextColumn textColumn = e.Column as DataGridTextColumn;
+            if (textColumn != null)
+            {
+                textColumn.Binding.StringFormat = "{0:0.00}";
+            }
+
             if (index == 0)
                 e.Column.Header = " ";
             else
