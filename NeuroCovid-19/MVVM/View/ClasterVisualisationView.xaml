@@ -42,16 +42,19 @@
                        HorizontalAlignment="Center" 
                        Margin="0,10,0,0" />
             <lvc:CartesianChart Grid.Row="1" 
-                                Grid.Column="0"
-                                TooltipTimeout="00:00:04.000">
+                                Grid.Column="0">
                 <lvc:CartesianChart.Series>
                     <lvc:ColumnSeries Values="{Binding ChartPoints, IsAsync=True}"
                                       DataLabels="True">    
                     </lvc:ColumnSeries>
                 </lvc:CartesianChart.Series>
                 <lvc:CartesianChart.AxisX>
-                    <lvc:Axis Labels="{Binding Columns, IsAsync=True}"/>
+                    <lvc:Axis Labels="{Binding Columns, IsAsync=True}"
+                              LabelFormatter="{Binding Formatter}"/>
                 </lvc:CartesianChart.AxisX>
+                <lvc:CartesianChart.AxisY>
+                    <lvc:Axis LabelFormatter="{Binding Formatter}"></lvc:Axis>
+                </lvc:CartesianChart.AxisY>
                 <lvc:CartesianChart.DataTooltip>
                     <local:CustomTooltip Focusable="True"/>
                 </lvc:CartesianChart.DataTooltip>
@@ -88,8 +91,12 @@
                     </lvc:ColumnSeries>
                 </lvc:CartesianChart.Series>
                 <lvc:CartesianChart.AxisX>
-                    <lvc:Axis Labels="{Binding ColumnsProperty, IsAsync=True}"/>
+                    <lvc:Axis Labels="{Binding ColumnsProperty, IsAsync=True}"
+                              LabelFormatter="{Binding Formatter}"/>
                 </lvc:CartesianChart.AxisX>
+                <lvc:CartesianChart.AxisY>
+                    <lvc:Axis LabelFormatter="{Binding Formatter}"></lvc:Axis>
+                </lvc:CartesianChart.AxisY>
             </lvc:CartesianChart>
             <ListBox Name="ListPorps"
                      Grid.Column="0"
@@ -143,14 +150,13 @@
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>
-                    <Setter Property="Height" Value="40"/>
                     <Style.Triggers>
                         <Trigger Property="FontSize" Value="10">
                             <Setter Property="Height" Value="auto"/>
                             <Setter Property="Width" Value="90"/>
                         </Trigger>
                         <Trigger Property="FontSize" Value="14">
-                            <Setter Property="Height" Value="50"/>
+                            <Setter Property="Height" Value="auto"/>
                             <Setter Property="Width" Value="auto"/>
                         </Trigger>
                     </Style.Triggers>
@@ -166,14 +172,14 @@
                             </TransformGroup>
                         </Setter.Value>
                     </Setter>
-                    <Setter Property="Height" Value="40"/>
                     <Style.Triggers>
                         <Trigger Property="FontSize" Value="10">
                             <Setter Property="Height" Value="auto"/>
+                            <Setter Property="Width" Value="90"/>
                         </Trigger>
                         <Trigger Property="FontSize" Value="14">
-                            <Setter Property="Height" Value="50"/>
-                            <Setter Property="Width" Value="70"/>
+                            <Setter Property="Height" Value="auto"/>
+                            <Setter Property="Width" Value="90"/>
                             <Setter Property="VerticalAlignment" Value="Center"/>
                         </Trigger>
                     </Style.Triggers>

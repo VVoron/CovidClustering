@@ -38,10 +38,5 @@ namespace NeuroCovid19.MVVM.View
             if (PropertyChanged != null)
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        private void Ellipse_MouseDown(object sender, MouseEventArgs e)
-        {
-            Data = null;
-        }
     }
 }

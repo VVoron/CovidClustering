@@ -25,9 +25,6 @@
                                FontWeight="Bold"
                                FontSize="18"
                                Margin="5 0 0 0" VerticalAlignment="Center"/>
-                    <Ellipse Grid.Column="1" Stroke="{Binding Series.Stroke}" Fill="Red"
-                             Height="18" Width="18"
-                             MouseDown="Ellipse_MouseDown"></Ellipse>
                     <DataGrid AutoGenerateColumns="False"
                               Grid.Row="1"
                               Grid.ColumnSpan="2"

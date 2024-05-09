@@ -19,6 +19,12 @@
         <lvc:CartesianChart Grid.Column="0"
                             Series="{Binding Series}"
                             LegendLocation="Left">
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis LabelFormatter="{Binding Formatter}"></lvc:Axis>
+            </lvc:CartesianChart.AxisX>
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis LabelFormatter="{Binding Formatter}"></lvc:Axis>
+            </lvc:CartesianChart.AxisY>
         </lvc:CartesianChart>
         <StackPanel Grid.Column="1">
             <Label Grid.Column="0"></Label>

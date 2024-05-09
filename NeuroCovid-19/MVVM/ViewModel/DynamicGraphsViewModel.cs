@@ -16,6 +16,8 @@ namespace NeuroCovid19.MVVM.ViewModel
 {
     public class DynamicGraphsViewModel: ObservableObject
     {
+        public Func<double, string> Formatter { get; set; }
+
         private SeriesCollection _series;
 
         public SeriesCollection Series
@@ -133,6 +135,8 @@ namespace NeuroCovid19.MVVM.ViewModel
         private List<string> _fullPropsList { get; set; }
         public DynamicGraphsViewModel()
         {
+            Formatter = value => Math.Round(value, 2).ToString();
+
             _fullPropsList = new ClasterisationProvider().PropertiesData().Skip(6).ToList();
             _fullItemsList = App.ContextOfData.Childrens_Info.Where(x => !string.IsNullOrEmpty(x.Name))
                                                              .GroupBy(x => x.Name)

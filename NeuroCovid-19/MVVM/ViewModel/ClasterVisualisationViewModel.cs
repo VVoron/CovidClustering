@@ -17,6 +17,7 @@ namespace NeuroCovid19.MVVM.ViewModel
 {
     public class ClasterVisualisationViewModel : ObservableObject
     {
+        public Func<double, string> Formatter { get; set; }
         private int? _select_property { get; set; }
         public int? SelectProperty
         {
@@ -175,6 +176,8 @@ namespace NeuroCovid19.MVVM.ViewModel
 
         public ClasterVisualisationViewModel()
         {
+            Formatter = value => Math.Round(value, 2).ToString();
+
             Properties = new ObservableCollection<string>(new ClasterisationProvider().PropertiesData());
             AvarageData = new List<AvgCovidEars>();
             SelectedClasterisation = (int)App.ContextOfData.SelectedClasterisation;
