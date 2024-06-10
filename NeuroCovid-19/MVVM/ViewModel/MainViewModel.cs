@@ -136,7 +136,7 @@ namespace NeuroCovid19.MVVM.ViewModel
             UploadViewCommand = new RelayCommand(x =>
             {
                 Loader = null;
-                PageTitle = "Сохраниение/Удаление настроек";
+                PageTitle = "Сохраниение/Загрузка настроек";
                 CurrentView = UploadVM;
             });
         }
