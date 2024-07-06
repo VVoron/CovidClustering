@@ -33,7 +33,7 @@ namespace NeuroCovid19.MVVM.View
 
             var clExt = new ClasterisationProvider();
 
-            if (index < 47)
+            if (index < 42)
             {
                 foreach (var list in clExt.colomnsToCheck)
                 {
@@ -55,9 +55,9 @@ namespace NeuroCovid19.MVVM.View
                                 new Binding(e.PropertyName),
                                 new Binding("Time_gestagration"),
                                 new Binding("Time_observation"),
-                                (index <= 41) ? new Binding("KSVP_r_20") : new Binding("KSVP_l_20"),
-                                (index <= 41) ? new Binding("KSVP_r_40") : new Binding("KSVP_l_40"),
-                                (index <= 41) ? new Binding("KSVP_r_60") : new Binding("KSVP_l_60")
+                                (index <= 37) ? new Binding("KSVP_r_20") : new Binding("KSVP_l_20"),
+                                (index <= 37) ? new Binding("KSVP_r_40") : new Binding("KSVP_l_40"),
+                                (index <= 37) ? new Binding("KSVP_r_60") : new Binding("KSVP_l_60")
                             },
                                 Converter = new ThreeValuesToColorConverter(),
                                 ConverterParameter = index

@@ -16,7 +16,7 @@ namespace NeuroCovid19.Data
         public KohanenOptions KohanenOptions;
         public DBScanOptions DBScanOptions;
         public Clasterisation SelectedClasterisation;
-        public int[] PropIdsForSkip =  new int[] { 6, 10, 11, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 30, 31, 35, 37, 38, 39, 41, 42, 43 };
+        public int[] PropIdsForTake = [0, 1, 2, 3, 4, 5, 6, 9, 26, 31, 32, 35];
         public ContextOfData()
         {
             Childrens_Info = new List<DataCOVIDEars>();

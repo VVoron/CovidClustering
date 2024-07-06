@@ -127,9 +127,9 @@ namespace NeuroCovid19.MVVM.ViewModel
             SelectStandart = new RelayCommand(x =>
             {
                 foreach (PropertiesModel prop in _properties)
-                    prop.IsUsed = true;
-                foreach (int index in App.ContextOfData.PropIdsForSkip)
-                    _properties[index].IsUsed = false;
+                    prop.IsUsed = false;
+                foreach (int index in App.ContextOfData.PropIdsForTake)
+                    _properties[index].IsUsed = true;
                 PropertiesList = new List<PropertiesModel>();
                 PropertiesList = App.ContextOfData.KohanenOptions.Properties;
             });

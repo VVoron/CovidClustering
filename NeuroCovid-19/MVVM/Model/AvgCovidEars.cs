@@ -19,16 +19,12 @@ namespace NeuroCovid19.MVVM.Model
         public double _time_gestagration { get; set; }
         public double _time_observation { get; set; }
         //Otoacustic
-        public double _otoacoustic_r_1 { get; set; }
-        public double _otoacoustic_r_2 { get; set; }
-        public double _otoacoustic_r_4 { get; set; }
-        public double _otoacoustic_r_6 { get; set; }
-        public double _otoacoustic_r_summary { get; set; }
-        public double _otoacoustic_l_1 { get; set; }
-        public double _otoacoustic_l_2 { get; set; }
-        public double _otoacoustic_l_4 { get; set; }
-        public double _otoacoustic_l_6 { get; set; }
-        public double _otoacoustic_l_summary { get; set; }
+        public double _otoacoustic_r_avarage { get; set; }
+        public double _otoacoustic_r_num_nulls { get; set; }
+        public double _otoacoustic_r_max { get; set; }
+        public double _otoacoustic_l_avarage { get; set; }
+        public double _otoacoustic_l_num_nulls { get; set; }
+        public double _otoacoustic_l_max { get; set; }
         public double _otoacoustic_r_05_15 { get; set; }
         public double _otoacoustic_r_15_25 { get; set; }
         public double _otoacoustic_r_25_35 { get; set; }
@@ -44,21 +40,19 @@ namespace NeuroCovid19.MVVM.Model
         public double _aSSR_r_1 { get; set; }
         public double _aSSR_r_2 { get; set; }
         public double _aSSR_r_4 { get; set; }
-        public double _aSSR_r_summary { get; set; }
+        public double _aSSR_r_avarage { get; set; }
         public double _aSSR_l_05 { get; set; }
         public double _aSSR_l_1 { get; set; }
         public double _aSSR_l_2 { get; set; }
         public double _aSSR_l_4 { get; set; }
-        public double _aSSR_l_summary { get; set; }
+        public double _aSSR_l_avarage { get; set; }
         //KSVP
         public double _kSVP_r_20 { get; set; }
         public double _kSVP_r_40 { get; set; }
         public double _kSVP_r_60 { get; set; }
-        public double _kSVP_r_summary { get; set; }
         public double _kSVP_l_20 { get; set; }
         public double _kSVP_l_40 { get; set; }
         public double _kSVP_l_60 { get; set; }
-        public double _kSVP_l_summary { get; set; }
 
         public AvgCovidEars(DataCOVIDEars[] data, int index)
         {
@@ -96,16 +90,12 @@ namespace NeuroCovid19.MVVM.Model
                                             _time_ill,
                                             _time_gestagration,
                                             _time_observation,
-                                            _otoacoustic_r_1,
-                                            _otoacoustic_r_2,
-                                            _otoacoustic_r_4,
-                                            _otoacoustic_r_6,
-                                            _otoacoustic_r_summary,
-                                            _otoacoustic_l_1,
-                                            _otoacoustic_l_2,
-                                            _otoacoustic_l_4,
-                                            _otoacoustic_l_6,
-                                            _otoacoustic_l_summary,
+                                            _otoacoustic_r_avarage,
+                                            _otoacoustic_r_num_nulls,
+                                            _otoacoustic_r_max,
+                                            _otoacoustic_l_avarage,
+                                            _otoacoustic_l_num_nulls,
+                                            _otoacoustic_l_max,
                                             _otoacoustic_r_05_15,
                                             _otoacoustic_r_15_25,
                                             _otoacoustic_r_25_35,
@@ -120,20 +110,18 @@ namespace NeuroCovid19.MVVM.Model
                                             _aSSR_r_1,
                                             _aSSR_r_2,
                                             _aSSR_r_4,
-                                            _aSSR_r_summary,
+                                            _aSSR_r_avarage,
                                             _aSSR_l_05,
                                             _aSSR_l_1,
                                             _aSSR_l_2,
                                             _aSSR_l_4,
-                                            _aSSR_l_summary,
+                                            _aSSR_l_avarage,
                                             _kSVP_r_20,
                                             _kSVP_r_40,
                                             _kSVP_r_60,
-                                            _kSVP_r_summary,
                                             _kSVP_l_20,
                                             _kSVP_l_40,
                                             _kSVP_l_60,
-                                            _kSVP_l_summary
             };
         }
     }

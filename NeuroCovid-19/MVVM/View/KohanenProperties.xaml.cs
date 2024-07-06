@@ -55,7 +55,7 @@ namespace NeuroCovid19.MVVM.View
             {
                 foreach (PropertiesModel prop in propGrid.ItemsSource)
                 {
-                    if (!App.ContextOfData.PropIdsForSkip.Contains(prop.Id))
+                    if (App.ContextOfData.PropIdsForTake.Contains(prop.Id))
                     {
                         DataGridTextColumn col = new DataGridTextColumn { Header = prop.Name, Binding = new Binding(path: typeof(DataCOVIDEars).GetProperties()[prop.Id + 3].Name) };
                         DGTable.Columns.Add(col);
@@ -96,7 +96,7 @@ namespace NeuroCovid19.MVVM.View
             DGTable.Columns.Clear();
             foreach (PropertiesModel prop in propGrid.ItemsSource)
             {
-                if (!App.ContextOfData.PropIdsForSkip.Contains(prop.Id))
+                if (App.ContextOfData.PropIdsForTake.Contains(prop.Id))
                 {
                     DataGridTextColumn col = new DataGridTextColumn { Header = prop.Name, Binding = new Binding(path: typeof(DataCOVIDEars).GetProperties()[prop.Id + 3].Name) };
                     DGTable.Columns.Add(col);

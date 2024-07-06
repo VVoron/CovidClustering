@@ -35,8 +35,8 @@ namespace NeuroCovid19.Functions
             {
                 switch (columnIndex)
                 {
-                    case 39:
-                    case 43:
+                    case 35:
+                    case 38:
                         {
                             if (currentColumnValue > 0)
                                 return Brushes.Green;
@@ -44,8 +44,8 @@ namespace NeuroCovid19.Functions
                                 return Brushes.Red;
                             return Brushes.Transparent;
                         }
-                    case 40:
-                    case 44:
+                    case 36:
+                    case 39:
                         {
                             if (currentColumnValue > 0 && ((double)values[3] == 0 || Double.IsNaN((double)values[3])))
                                 return Brushes.Green;
@@ -54,8 +54,8 @@ namespace NeuroCovid19.Functions
                             else
                                 return Brushes.Transparent;
                         }
-                    case 41:
-                    case 45:
+                    case 37:
+                    case 40:
                         {
                             if (currentColumnValue > 0 && ((double)values[3] == 0 || Double.IsNaN((double)values[3])) && ((double)values[4] == 0 || Double.IsNaN((double)values[4])))
                                 return Brushes.Green;
