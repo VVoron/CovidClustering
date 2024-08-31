@@ -22,19 +22,17 @@ namespace NeuroCovid19.Providers
 
         public DBScanProvider() { }
 
-        public DBScanProvider(List<DataCOVIDEars> data)
+        public DBScanProvider(List<DataCOVIDEars> data, double[,] dataPoints)
         {
             _eps = App.ContextOfData.DBScanOptions.Eps;
             _minPts = App.ContextOfData.DBScanOptions.MinPts;
 
-            var dataPoints = ClasterVisualisationExtension.GetGraphPoints(new List<DataCOVIDEars[]>() { data.ToArray() }, App.ContextOfData.DBScanOptions.Properties);
-
             _allPoints = new List<DBScanPoint>();
             Clasters = new List<DataCOVIDEars[]>();
 
-            for (int i = 0; i < dataPoints.Count; i++)
+            for (int i = 0; i < dataPoints.GetLength(0); i++)
             {
-                _allPoints.Add(new DBScanPoint(data[i], dataPoints[i]));
+                _allPoints.Add(new DBScanPoint(data[i], dataPoints.GetArrayLine(i)));
             }
 
             int numClasters = 0;

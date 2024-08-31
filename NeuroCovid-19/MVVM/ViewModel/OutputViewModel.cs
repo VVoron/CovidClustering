@@ -150,12 +150,28 @@ namespace NeuroCovid19.MVVM.ViewModel
                     DataWithSkipping.Add(data);
             }
 
-            var dataPoints = ClasterVisualisationExtension.GetGraphPoints(new List<DataCOVIDEars[]>() { DataWithSkipping.ToArray() }, App.ContextOfData.KohanenOptions.Properties);
-            _allNormalizeData = new double[dataPoints.Count, 2];
-            for (int i = 0; i < dataPoints.Count; i++)
+            _allNormalizeData = new double[DataWithSkipping.Count, _properties.Count(x => x.IsUsed)];
+
+            var usedProps = _properties.Where(x => x.IsUsed).ToList();
+            for (int j = 0; j < usedProps.Count; j++)
             {
-                _allNormalizeData[i, 0] = dataPoints[i].PCAFeatures[0];
-                _allNormalizeData[i, 1] = dataPoints[i].PCAFeatures[1];
+                double max = 0.0;
+                double min = 0.0;
+                for (int i = 0; i < DataWithSkipping.Count; i++)
+                {
+                    var data = DataWithSkipping[i].DataForClasterisation();
+                    if (data[usedProps[j].Id] > max)
+                        max = data[usedProps[j].Id];
+
+                    if (data[usedProps[j].Id] < min)
+                        min = data[usedProps[j].Id];
+                }
+
+                for (int i = 0; i < DataWithSkipping.Count; i++)
+                {
+                    var data = DataWithSkipping[i].DataForClasterisation();
+                    _allNormalizeData[i, j] = max == min ? 0.0 : 2 * (data[usedProps[j].Id] - min) / (max - min) - 1;
+                }
             }
 
             return countProps;
@@ -184,7 +200,7 @@ namespace NeuroCovid19.MVVM.ViewModel
                         MessageBox.Show("Не заданы обязательные парамметры", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
-                    clasterisation = new DBScanProvider(DataWithSkipping);
+                    clasterisation = new DBScanProvider(DataWithSkipping, _allNormalizeData);
                     break;
                 default:
                     break;

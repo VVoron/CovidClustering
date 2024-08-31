@@ -11,10 +11,10 @@ namespace NeuroCovid19.MVVM.Model
         public DataCOVIDEars data { get; set; }
         public double[] Coordinates;
         public int? Claster;
-        public DBScanPoint(DataCOVIDEars item, PCAFitted coordinates)
+        public DBScanPoint(DataCOVIDEars item, double[] coordinates)
         {
             data = item;
-            Coordinates = new double[] { coordinates.PCAFeatures[0], coordinates.PCAFeatures[1] };
+            Coordinates = coordinates;
         }
 
         private double GetDistance(DBScanPoint point)
