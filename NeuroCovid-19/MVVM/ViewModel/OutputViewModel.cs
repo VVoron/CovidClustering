@@ -150,7 +150,7 @@ namespace NeuroCovid19.MVVM.ViewModel
                     DataWithSkipping.Add(data);
             }
 
-            var dataPoints = ClasterVisualisationExtension.GetGraphPoints(new List<DataCOVIDEars[]>() { DataWithSkipping.ToArray() }, App.ContextOfData.KohanenOptions.Properties);
+            var dataPoints = ClasterVisualisationExtension.GetGraphPoints(new List<DataCOVIDEars[]>() { DataWithSkipping.ToArray() }, _properties);
             _allNormalizeData = new double[dataPoints.Count, 2];
             for (int i = 0; i < dataPoints.Count; i++)
             {
