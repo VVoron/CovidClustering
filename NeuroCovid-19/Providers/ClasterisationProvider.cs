@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeuroCovid19.MVVM.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -197,6 +198,66 @@ namespace NeuroCovid19.Providers
             if (colomnsToCheck[1].Contains(indexProp))
                 return new double[] { 0.0001, 25.001 };
             return null;
+        }
+
+        public void CalculateRandIndex(List<DataCOVIDEars[]> clasters, out string info, bool isDBSCAN = false)
+        {
+            int TP = 0, FP = 0, FN = 0, TN = 0;
+
+            var allExamples = new List<DataCOVIDEars>();
+            int clastIndex = 0;
+            foreach (var cluster in clasters)
+            {
+                clastIndex++;
+                if (isDBSCAN && clastIndex < 2)
+                    continue;
+                allExamples.AddRange(cluster);
+            }
+
+            // Подсчитываем все пары
+            for (int i = 0; i < allExamples.Count; i++)
+            {
+                for (int j = i + 1; j < allExamples.Count; j++)
+                {
+                    bool sameCluster = false;
+                    bool sameClass = allExamples[i].IsEqualsClass(allExamples[j]);
+
+                    // Проверяем принадлежность к одному кластеру
+                    foreach (var cluster in clasters)
+                    {
+                        if (cluster.Contains(allExamples[i]) && cluster.Contains(allExamples[j]))
+                        {
+                            sameCluster = true;
+                            break;
+                        }
+                    }
+
+                    if (sameCluster && sameClass)
+                    {
+                        TP++;
+                    }
+                    else if (sameCluster && !sameClass)
+                    {
+                        FP++;
+                    }
+                    else if (!sameCluster && sameClass)
+                    {
+                        FN++;
+                    }
+                    else if (!sameCluster && !sameClass)
+                    {
+                        TN++;
+                    }
+                }
+            }
+
+            // Выводим результаты
+            info = $"TP: {TP}, FP: {FP}, FN: {FN}, TN: {TN}";
+
+            // Рассчитываем индекс Rand
+            double randIndex = (double)(TP + TN) / (TP + TN + FP + FN);
+
+            info += $"\nИндекс Rand: {randIndex}";
         }
     }
 }

@@ -236,5 +236,52 @@ namespace NeuroCovid19.MVVM.Model
                                             KSVP_l_60.ToString(),
             };
         }
+
+        public int GetAnomalyClass()
+        {
+            List<bool> propAnomalies = new List<bool>();
+            var props = App.ContextOfData.SelectedClasterisation == Enumerations.Clasterisation.Kohanen ? App.ContextOfData.KohanenOptions.Properties : App.ContextOfData.DBScanOptions.Properties;
+
+            if (props.Any(x => x.IsUsed && x.Name.Contains("ОАЭ")))
+                propAnomalies.Add((Otoacoustic_l_avarage + Otoacoustic_r_avarage) / 2 >= 0.5);
+            if (props.Any(x => x.IsUsed && x.Name.Contains("КСВП")))
+                propAnomalies.Add((KSVP_r_20 + KSVP_r_20) / 2 >= 0.5);
+            if (props.Any(x => x.IsUsed && x.Name.Contains("ASSR")))
+                propAnomalies.Add((ASSR_r_avarage + ASSR_l_avarage) / 2 >= 0.5);
+
+            return propAnomalies.Count(x => x);
+        }
+
+        public int GetGestationClass()
+        {
+            if (Time_gestagration < 29)
+                return 0;
+            if (Time_gestagration >= 29 && Time_gestagration <= 32)
+                return 1;
+            if (Time_gestagration >= 33 && Time_gestagration <= 36)
+                return 2;
+
+            return 3;
+        }
+
+        public int GetTimeObservationClass()
+        {
+            if (Time_observation <= 3)
+                return 0;
+            if (Time_observation > 3 && Time_observation <= 6)
+                return 1;
+            return 2;
+        }
+
+        public bool IsEqualsClass(DataCOVIDEars item)
+        {
+            return GetAnomalyClass() == item.GetAnomalyClass() &&
+                   Mother == item.Mother &&
+                   Son == item.Son &&
+                   (int)Time_pregnancy_ill / 3 == (int)item.Time_pregnancy_ill / 3 &&
+                   (int)Time_ill / 3 == (int)item.Time_ill / 3 &&
+                   GetTimeObservationClass() == item.GetTimeObservationClass() &&
+                   GetGestationClass() == item.GetGestationClass();
+        }
     }
 }
