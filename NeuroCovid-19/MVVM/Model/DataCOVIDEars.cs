@@ -316,6 +316,45 @@ namespace NeuroCovid19.MVVM.Model
             return Double.NaN;
         }
 
+        public int GetAnomalyClass()
+        {
+            List<bool> propAnomalies = [(Otoacoustic_l_summary + Otoacoustic_r_summary) / 2 >= 0.5,
+            (Otoacoustic_l_summary + Otoacoustic_r_summary) / 2 >= 0.5,
+            (Otoacoustic_l_summary + Otoacoustic_r_summary) / 2 >= 0.5];
 
+            return propAnomalies.Count(x => x);
+        }
+
+        public int GetGestationClass()
+        {
+            if (Time_gestagration < 29)
+                return 0;
+            if (Time_gestagration >= 29 && Time_gestagration <= 32)
+                return 1;
+            if (Time_gestagration >= 33 && Time_gestagration <= 36)
+                return 2;
+
+            return 3;
+        }
+
+        public int GetTimeObservationClass()
+        {
+            if (Time_observation <= 3)
+                return 0;
+            if (Time_observation > 3 && Time_observation <= 6)
+                return 1;
+            return 2;
+        }
+
+        public bool IsEqualsClass(DataCOVIDEars item)
+        {
+            return GetAnomalyClass() == item.GetAnomalyClass() &&
+                   Mother == item.Mother &&
+                   Son == item.Son &&
+                   (int)Time_pregnancy_ill / 3 == (int)item.Time_pregnancy_ill / 3 &&
+                   (int)Time_ill / 3 == (int)item.Time_ill / 3 &&
+                   GetTimeObservationClass() == item.GetTimeObservationClass() &&
+                   GetGestationClass() == item.GetGestationClass();
+        }
     }
 }
