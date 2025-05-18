@@ -1,6 +1,7 @@
 ﻿using NeuroCovid19.Extensions;
 using NeuroCovid19.Functions;
 using NeuroCovid19.Providers;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System;
@@ -18,8 +19,14 @@ namespace NeuroCovid19.Functions
         public readonly SolidColorBrush MoreBigger = new SolidColorBrush(Color.FromArgb(255, 255, 55, 55));
         public readonly SolidColorBrush MoreSmaller = new SolidColorBrush(Color.FromArgb(255, 254, 222, 95));
 
+        public static readonly System.Drawing.Color MoreBiggerDrawingColor = System.Drawing.Color.FromArgb(255, 255, 55, 55);
+        public static readonly System.Drawing.Color MoreSmallerDrawingColor = System.Drawing.Color.FromArgb(255, 254, 222, 95);
+
         public readonly SolidColorBrush SuchBigger = new SolidColorBrush(Color.FromArgb(255, 255, 138, 138));
         public readonly SolidColorBrush SuchSmaller = new SolidColorBrush(Color.FromArgb(255, 255, 250, 150));
+
+        public static readonly System.Drawing.Color SuchBiggerDrawingColor = System.Drawing.Color.FromArgb(255, 255, 138, 138);
+        public static readonly System.Drawing.Color SuchSmallerDrawingColor = System.Drawing.Color.FromArgb(255, 255, 250, 150);
 
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {

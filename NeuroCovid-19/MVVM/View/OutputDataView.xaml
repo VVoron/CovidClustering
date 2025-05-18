@@ -80,6 +80,7 @@
                                   SelectionChanged="ComboBox_SelectionChanged"/>
                 <Button Content="Сделать выборку исходной" Command="{Binding ChangeInitDataByClaster}"/>
                 <Button Content="Выгрузить данные в файл" Command="{Binding GetExcelOutput}"/>
+                <Button Content="Выгрузить отчет" Command="{Binding GetReportOutput}"/>
             </ToolBar>
         </Grid>
     </Grid>

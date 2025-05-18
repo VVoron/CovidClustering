@@ -17,6 +17,9 @@ namespace NeuroCovid19.Data
         public DBScanOptions DBScanOptions;
         public Clasterisation SelectedClasterisation;
         public int[] PropIdsForTake = [0, 1, 2, 3, 4, 5, 6, 9, 26, 31, 32, 35];
+
+        public string SelectedClasterisationString => SelectedClasterisation == Clasterisation.Kohanen ? "Кохонен" : "DBSCAN";
+
         public ContextOfData()
         {
             Childrens_Info = new List<DataCOVIDEars>();

@@ -1,6 +1,7 @@
 ﻿using NeuroCovid19.MVVM.Model;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -136,6 +137,16 @@ namespace NeuroCovid19.Providers
                                                         };
         }
 
+        public Dictionary<string, int> MainMapperForPropIds = new()
+        {
+            { "Отоакустическая эмиссия правого уха", 6 },
+            { "Отоакустическая эмиссия левого уха", 9 },
+            { "ASSR правого уха", 26 },
+            { "ASSR левого уха", 31 },
+            { "КСВП правого уха (20)", 32 },
+            { "КСВП левого уха (20)", 35 },
+        };
+
         public int[] ListShafle(int[] a)
         {
             Random random = new Random();
@@ -200,12 +211,15 @@ namespace NeuroCovid19.Providers
             return null;
         }
 
-        public void CalculateRandIndex(List<DataCOVIDEars[]> clasters, out string info, bool isDBSCAN = false)
+        public string CalculateRandIndex(List<DataCOVIDEars[]> clasters, out string distributedInfo, out string randIndex)
         {
             int TP = 0, FP = 0, FN = 0, TN = 0;
 
             var allExamples = new List<DataCOVIDEars>();
             int clastIndex = 0;
+
+            bool isDBSCAN = App.ContextOfData.SelectedClasterisation == Enumerations.Clasterisation.DBScan;
+
             foreach (var cluster in clasters)
             {
                 clastIndex++;
@@ -252,12 +266,12 @@ namespace NeuroCovid19.Providers
             }
 
             // Выводим результаты
-            info = $"TP: {TP}, FP: {FP}, FN: {FN}, TN: {TN}";
+            distributedInfo = $"TP: {TP}, FP: {FP}, FN: {FN}, TN: {TN}";
 
             // Рассчитываем индекс Rand
-            double randIndex = (double)(TP + TN) / (TP + TN + FP + FN);
+            randIndex = ((double)(TP + TN) / (TP + TN + FP + FN)).ToString();
 
-            info += $"\nИндекс Rand: {randIndex}";
+            return distributedInfo + $"\nИндекс Rand: {randIndex}";
         }
     }
 }

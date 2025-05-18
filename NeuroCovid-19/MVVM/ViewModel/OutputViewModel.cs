@@ -26,6 +26,7 @@ namespace NeuroCovid19.MVVM.ViewModel
         public RelayCommand RelayKohanenWithW { get; set; }
         public RelayCommand ChangeInitDataByClaster { get; set; }
         public RelayCommand GetExcelOutput { get; set; }
+        public RelayCommand GetReportOutput { get; set; }
         private DataCOVIDEars[]? _data { get; set; }
         public object Load
         {
@@ -194,9 +195,9 @@ namespace NeuroCovid19.MVVM.ViewModel
             SelectedClaster = 0;
             OnPropertyChanged(nameof(ClasterComboBox));
             OnPropertyChanged(nameof(SelectedClaster));
-            (new ClasterisationProvider()).CalculateRandIndex(clasterisation.Clasters, out string infoMessage, (Clasterisation)_selectedClasterisaton == Clasterisation.DBScan);
+            var metricMessage = (new ClasterisationProvider()).CalculateRandIndex(clasterisation.Clasters, out string infoMessage, out string randIndex);
             await Task.Delay(1500);
-            MessageBox.Show(infoMessage, "Метрики", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(metricMessage, "Метрики", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private async Task WCoefsStudy()
@@ -340,6 +341,15 @@ namespace NeuroCovid19.MVVM.ViewModel
             Load = null;
         }
 
+        private void GetClasterReport()
+        {
+            if (Load == null)
+                Load = new Loading();
+
+            ReportExtensions.GetClasterReport();
+            Load = null;
+        }
+
         public OutputViewModel() {
             SelectedClasterisation = (int)App.ContextOfData.SelectedClasterisation;
             ClasterisationComboBox = new List<string>() { "Кохонен", "DBScan" };
@@ -391,6 +401,11 @@ namespace NeuroCovid19.MVVM.ViewModel
             GetExcelOutput = new RelayCommand(x =>
             {
                 GetOutputDataToExcel();
+            });
+
+            GetReportOutput = new RelayCommand(x =>
+            {
+                GetClasterReport();
             });
         }
     }
