@@ -211,7 +211,7 @@ namespace NeuroCovid19.Providers
             return null;
         }
 
-        public string CalculateRandIndex(List<DataCOVIDEars[]> clasters, out string distributedInfo, out string randIndex)
+        public string CalculateRandIndex(List<DataCOVIDEars[]> clasters, out string distributedInfo, out double randIndex)
         {
             int TP = 0, FP = 0, FN = 0, TN = 0;
 
@@ -269,7 +269,7 @@ namespace NeuroCovid19.Providers
             distributedInfo = $"TP: {TP}, FP: {FP}, FN: {FN}, TN: {TN}";
 
             // Рассчитываем индекс Rand
-            randIndex = ((double)(TP + TN) / (TP + TN + FP + FN)).ToString();
+            randIndex = (double)(TP + TN) / (TP + TN + FP + FN);
 
             return distributedInfo + $"\nИндекс Rand: {randIndex}";
         }

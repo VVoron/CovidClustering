@@ -59,11 +59,18 @@ namespace NeuroCovid19.Extensions
                             var info = item.GetAllData();
                             for (int i = 0; i < info.Count(); i++)
                             {
-                                worksheet.Cells[k, i + 1].Value = info[i].Replace(',', '.');
-                                if (clasterisationProvider.colomnsToCheck.Any(x => x.Contains(i)))
+                                if (double.TryParse(info[i], out double value))
                                 {
-                                    worksheet.Cells[k, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                    worksheet.Cells[k, i + 1].Style.Fill.BackgroundColor.SetColor(GetColorForCells(clasterisationProvider, info, i, item.Time_observation, item.Time_gestagration));
+                                    worksheet.Cells[k, i + 1].Value = value;
+                                    if (clasterisationProvider.colomnsToCheck.Any(x => x.Contains(i)))
+                                    {
+                                        worksheet.Cells[k, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                        worksheet.Cells[k, i + 1].Style.Fill.BackgroundColor.SetColor(GetColorForCells(clasterisationProvider, info, i, item.Time_observation, item.Time_gestagration));
+                                    }
+                                }
+                                else
+                                {
+                                    worksheet.Cells[k, i + 1].Value = info[i];
                                 }
                             }
                             k++;
@@ -107,12 +114,12 @@ namespace NeuroCovid19.Extensions
             worksheet.Cells[7, 2].Value = "Количество данных, не попавших в кластеры";
             worksheet.Cells[7, 3].Value = (App.ContextOfData.Childrens_Info.Count() - numDataInClasters);
 
-            (new ClasterisationProvider()).CalculateRandIndex(clasters, out string distributedInfo, out string randIndex);
+            (new ClasterisationProvider()).CalculateRandIndex(clasters, out string distributedInfo, out double randIndex);
             worksheet.Cells[8, 2].Value = "Метрики";
             worksheet.Cells[8, 3].Value = distributedInfo;
 
             worksheet.Cells[9, 2].Value = "Индекс Rand";
-            worksheet.Cells[9, 3].Value = randIndex;
+            worksheet.Cells[9, 3].Value = Math.Round(randIndex, 2);
 
             worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 

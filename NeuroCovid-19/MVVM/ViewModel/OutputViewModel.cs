@@ -195,7 +195,7 @@ namespace NeuroCovid19.MVVM.ViewModel
             SelectedClaster = 0;
             OnPropertyChanged(nameof(ClasterComboBox));
             OnPropertyChanged(nameof(SelectedClaster));
-            var metricMessage = (new ClasterisationProvider()).CalculateRandIndex(clasterisation.Clasters, out string infoMessage, out string randIndex);
+            var metricMessage = (new ClasterisationProvider()).CalculateRandIndex(clasterisation.Clasters, out _, out _);
             await Task.Delay(1500);
             MessageBox.Show(metricMessage, "Метрики", MessageBoxButton.OK, MessageBoxImage.Information);
         }
