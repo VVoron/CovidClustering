@@ -114,16 +114,47 @@ namespace NeuroCovid19.Extensions
             worksheet.Cells[7, 2].Value = "Количество данных, не попавших в кластеры";
             worksheet.Cells[7, 3].Value = (App.ContextOfData.Childrens_Info.Count() - numDataInClasters);
 
-            (new ClasterisationProvider()).CalculateRandIndex(clasters, out string distributedInfo, out double randIndex);
-            worksheet.Cells[8, 2].Value = "Метрики";
-            worksheet.Cells[8, 3].Value = distributedInfo;
+            var currentRowIndex = 8;
+            if (App.ContextOfData.SelectedClasterisation == Clasterisation.Kohanen)
+            {
+                worksheet.Cells[currentRowIndex, 2].Value = "Скорость сходимости (p)";
+                worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.KohanenOptions.V;
+                currentRowIndex++;
+                worksheet.Cells[currentRowIndex, 2].Value = "Граница разрыва (p)";
+                worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.KohanenOptions.Rk;
+                currentRowIndex++;
+                worksheet.Cells[currentRowIndex, 2].Value = "Количество шагов (p)";
+                worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.KohanenOptions.Steps;
+                currentRowIndex++;
+            }
+            else
+            {
+                worksheet.Cells[currentRowIndex, 2].Value = "Радиус сходимости (p)";
+                worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.DBScanOptions.Eps;
+                currentRowIndex++;
+                worksheet.Cells[currentRowIndex, 2].Value = "Плотность точки (p)";
+                worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.DBScanOptions.MinPts;
+                currentRowIndex++;
+            }
 
-            worksheet.Cells[9, 2].Value = "Индекс Rand";
-            worksheet.Cells[9, 3].Value = Math.Round(randIndex, 2);
+
+            (new ClasterisationProvider()).CalculateRandIndex(clasters, out string distributedInfo, out double randIndex);
+            worksheet.Cells[currentRowIndex, 2].Value = "Метрики";
+            worksheet.Cells[currentRowIndex, 3].Value = distributedInfo;
+            currentRowIndex++;
+
+            worksheet.Cells[currentRowIndex, 2].Value = "Индекс Rand";
+            worksheet.Cells[currentRowIndex, 3].Value = Math.Round(randIndex, 2);
+            currentRowIndex++;
+
+            worksheet.Cells[currentRowIndex, 2, currentRowIndex, 3].Merge = true;
+            worksheet.Cells[currentRowIndex, 2].Value = "* (p) обозначает что поле отвечает за параметры кластеризации";
+            worksheet.Cells[currentRowIndex, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            worksheet.Cells[currentRowIndex, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
             worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 
-            var range = worksheet.Cells[2, 2, 9, 3];
+            var range = worksheet.Cells[2, 2, currentRowIndex, 3];
             range.Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Black);
 
             for (int clastIndex = 0; clastIndex < clasters.Count; clastIndex++)
