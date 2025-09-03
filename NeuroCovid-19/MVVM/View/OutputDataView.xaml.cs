@@ -53,8 +53,8 @@ namespace NeuroCovid19.MVVM.View
                                 Bindings =
                             {
                                 new Binding(e.PropertyName),
-                                new Binding("Time_gestagration"),
                                 new Binding("Time_observation"),
+                                new Binding("Time_gestagration"),
                                 (index <= 37) ? new Binding("KSVP_r_20") : new Binding("KSVP_l_20"),
                                 (index <= 37) ? new Binding("KSVP_r_40") : new Binding("KSVP_l_40"),
                                 (index <= 37) ? new Binding("KSVP_r_60") : new Binding("KSVP_l_60")
@@ -71,8 +71,8 @@ namespace NeuroCovid19.MVVM.View
                                 Bindings =
                             {
                                 new Binding(e.PropertyName),
+                                new Binding("Time_observation"),
                                 new Binding("Time_gestagration"),
-                                new Binding("Time_observation")
                             },
                                 Converter = new ThreeValuesToColorConverter(),
                                 ConverterParameter = index
