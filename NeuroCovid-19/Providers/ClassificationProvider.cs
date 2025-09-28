@@ -4,6 +4,7 @@ using NeuroCovid19.MVVM.Model;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
@@ -46,10 +47,11 @@ namespace NeuroCovid19.Providers
                 }
             });
 
-            _dataView = loader.Load(_csvPath);
+            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "synthetic_oae_assr.csv");
+            _dataView = loader.Load(filePath);
         }
 
-        public void StartClassification()
+        public string StartClassification()
         {
             var split = _mlContext.Data.TrainTestSplit(_dataView, testFraction: 0.2, seed: 7);
             var train = split.TrainSet;
@@ -87,6 +89,8 @@ namespace NeuroCovid19.Providers
             var resultMetrics = $"MicroAccuracy: {metrics.MicroAccuracy:F3}\n" +
                                 $"MacroAccuracy: {metrics.MacroAccuracy:F3}\n" +
                                 $"LogLoss: {metrics.LogLoss:F3}";
+
+            return resultMetrics;
         }
 
         public bool IsModelPretrained()
@@ -103,7 +107,6 @@ namespace NeuroCovid19.Providers
                 new List<DataCOVIDEars>(),
                 new List<DataCOVIDEars>(),
                 new List<DataCOVIDEars>(),
-                new List<DataCOVIDEars>(),
                 new List<DataCOVIDEars>()
             };
 
@@ -114,11 +117,20 @@ namespace NeuroCovid19.Providers
                 var sample = new HearingSample(item);
                 var res = engine.Predict(sample);
 
-                var classNumber = Convert.ToInt32(res.PredictedLabel) - 1;
-                classificationClasses[classNumber].Add(item);
+                if (int.TryParse(res.PredictedLabel, out var classNum))
+                {
+                    try
+                    {
+                        classificationClasses[classNum - 1].Add(item);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(classNum);
+                    }
+                }
             }
 
-            App.ContextOfData.KohanenOptions.ClastersInfo = classificationClasses;
+            App.ContextOfData.ClassificationClasses = classificationClasses.Select(x => x.ToArray()).ToList();
         }
     }
 }

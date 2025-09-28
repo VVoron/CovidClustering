@@ -39,7 +39,7 @@ namespace NeuroCovid19.MVVM.ViewModel
             }
             set
             {
-                App.ContextOfData.SelectedClasterisation = (Enumerations.Clasterisation)value;
+                App.ContextOfData.SelectedMethod = (Enumerations.Method)value;
                 _selectedClasterisaton = (int)value;
                 GetPoints();
                 OnPropertyChanged();
@@ -66,18 +66,23 @@ namespace NeuroCovid19.MVVM.ViewModel
             _series = new SeriesCollection();
             List<DataCOVIDEars[]> clasters = null;
             List<PropertiesModel> properties = null;
-            Enumerations.Clasterisation method = Enumerations.Clasterisation.Kohanen;
-            switch (App.ContextOfData.SelectedClasterisation)
+            Enumerations.Method method = Enumerations.Method.Kohanen;
+            switch (App.ContextOfData.SelectedMethod)
             {
-                case Enumerations.Clasterisation.Kohanen:
+                case Enumerations.Method.Kohanen:
                     clasters = App.ContextOfData.KohanenOptions.ClastersInfo;
                     properties = App.ContextOfData.KohanenOptions.Properties;
-                    method = Enumerations.Clasterisation.Kohanen;
+                    method = Enumerations.Method.Kohanen;
                     break;
-                case Enumerations.Clasterisation.DBScan:
+                case Enumerations.Method.DBScan:
                     clasters = App.ContextOfData.DBScanOptions.ClastersInfo;
                     properties = App.ContextOfData.DBScanOptions.Properties;
-                    method = Enumerations.Clasterisation.DBScan;
+                    method = Enumerations.Method.DBScan;
+                    break;
+                case Enumerations.Method.Classification:
+                    clasters = App.ContextOfData.ClassificationClasses;
+                    properties = App.ClassificationDefaultProperties;
+                    method = Enumerations.Method.Classification;
                     break;
                 default:
                     break;
@@ -91,9 +96,25 @@ namespace NeuroCovid19.MVVM.ViewModel
                 return;
             for (int clastIndex = 0; clastIndex < clasters.Count; clastIndex++)
             {
+                var title = string.Empty;
+                if (method != Enumerations.Method.Classification) {
+                    if (clastIndex != 0 || method == Enumerations.Method.Kohanen)
+                    {
+                        title = $"{clastIndex + 1} кластер";
+                    }
+                    else
+                    {
+                        title = "Шум";
+                    }
+                }
+                else
+                {
+                    title = $"{clastIndex + 1} класс";
+                }
+
                 var ScatterSeries = new ScatterSeries
                 {
-                    Title = (method == Enumerations.Clasterisation.DBScan) ? (clastIndex == 0)? "Шум": $"{clastIndex} кластер" : $"{clastIndex + 1} кластер",
+                    Title = title,
                     Values = new ChartValues<ObservablePoint>(),
                     PointGeometry = DefaultGeometries.Circle
                 };
@@ -115,9 +136,9 @@ namespace NeuroCovid19.MVVM.ViewModel
         public ClastersGraphInterpViewModel()
         {
             Formatter = value => Math.Round(value, 2).ToString();
-            SelectedClasterisation = (int)App.ContextOfData.SelectedClasterisation;
+            SelectedClasterisation = (int)App.ContextOfData.SelectedMethod;
 
-            ClasterisationComboBox = new List<string>() { "Кохонен", "DBScan" };
+            ClasterisationComboBox = new List<string>() { "Кохонен", "DBScan", "Классификация" };
         }
     }
 }

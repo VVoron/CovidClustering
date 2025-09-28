@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NeuroCovid19.Enumerations
 {
-    public enum Clasterisation
+    public enum Method
     {
         /// <summary>
         /// Метод Кохонена
@@ -16,5 +16,10 @@ namespace NeuroCovid19.Enumerations
         /// Метод DBScan
         /// </summary>
         DBScan = 1,
+
+        /// <summary>
+        /// Классификация
+        /// </summary>
+        Classification = 2,
     }
 }

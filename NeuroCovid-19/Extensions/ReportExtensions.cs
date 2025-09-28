@@ -26,13 +26,15 @@ namespace NeuroCovid19.Extensions
     {
         public static void GetClasterReport()
         {
-            var data = App.ContextOfData.SelectedClasterisation;
+            var data = App.ContextOfData.SelectedMethod;
             var clasterisationProvider = new ClasterisationProvider();
             var dataColumns = clasterisationProvider.СolomnsData();
 
-            var fileName = $"Отчет по кластеризации ({App.ContextOfData.SelectedClasterisationString})";
+            var fileName = $"Отчет по методу {App.ContextOfData.SelectedClasterisationString}";
 
-            var clasters = App.ContextOfData.SelectedClasterisation == Enumerations.Clasterisation.Kohanen ? App.ContextOfData.KohanenOptions.ClastersInfo : App.ContextOfData.DBScanOptions.ClastersInfo;
+            var clasters = App.ContextOfData.SelectedMethod == Method.Kohanen ? App.ContextOfData.KohanenOptions.ClastersInfo :
+                           App.ContextOfData.SelectedMethod == Method.DBScan ? App.ContextOfData.DBScanOptions.ClastersInfo :
+                           App.ContextOfData.ClassificationClasses;
 
             using (SaveFileDialog saveFileDialog = new SaveFileDialog() { Filter = "Excel Workbook|*.xls*", ValidateNames = true, FileName = fileName })
             {
@@ -49,7 +51,7 @@ namespace NeuroCovid19.Extensions
                     for (int clastIndex = 0; clastIndex < clasters.Count(); clastIndex++)
                     {
                         var claster = clasters[clastIndex];
-                        var worksheet = excelFile.Workbook.Worksheets.Add(App.ContextOfData.SelectedClasterisation == Clasterisation.DBScan  && clastIndex == 0 ? "Шум" : $"{clastIndex + 1} Кластер");
+                        var worksheet = excelFile.Workbook.Worksheets.Add(App.ContextOfData.SelectedMethod == Method.DBScan  && clastIndex == 0 ? "Шум" : $"{clastIndex + 1} Кластер");
                         for (int i = 0; i < dataColumns.Count; i++)
                             worksheet.Cells[1, i + 1].Value = dataColumns[i];
                         int k = 2;
@@ -95,71 +97,133 @@ namespace NeuroCovid19.Extensions
             worksheet.Cells[2, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
             worksheet.Cells[3, 2, 3, 3].Merge = true;
-            worksheet.Cells[3, 2].Value = $"Выбранный метод кластеризации - {App.ContextOfData.SelectedClasterisationString}";
+            worksheet.Cells[3, 2].Value = $"Выбранный метод - {App.ContextOfData.SelectedClasterisationString}";
             worksheet.Cells[3, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             worksheet.Cells[3, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
-            worksheet.Cells[4, 2].Value = "Количество кластеров";
+            worksheet.Cells[4, 2].Value = "Количество кластеров/классов";
             worksheet.Cells[4, 3].Value = clasters.Count;
 
-            worksheet.Cells[5, 2].Value = "Количество используемых признаков для кластеризации";
-            var numProps = App.ContextOfData.SelectedClasterisation == Clasterisation.Kohanen ? App.ContextOfData.KohanenOptions.Properties.Count(x => x.IsUsed)
-                : App.ContextOfData.DBScanOptions.Properties.Count(x => x.IsUsed);
-            worksheet.Cells[5, 3].Value = numProps;
+            var currentRowIndex = 5;
+            if (App.ContextOfData.SelectedMethod != Method.Classification)
+            {
+                worksheet.Cells[currentRowIndex, 2].Value = "Количество используемых признаков для кластеризации";
+                var numProps = App.ContextOfData.SelectedMethod == Method.Kohanen ? App.ContextOfData.KohanenOptions.Properties.Count(x => x.IsUsed)
+                    : App.ContextOfData.DBScanOptions.Properties.Count(x => x.IsUsed);
+                worksheet.Cells[currentRowIndex, 3].Value = numProps;
+                currentRowIndex++;
+            }
 
-            worksheet.Cells[6, 2].Value = "Количество используемых данных";
+            worksheet.Cells[currentRowIndex, 2].Value = "Количество используемых данных";
             var numDataInClasters = clasters.Sum(x => x.Length);
-            worksheet.Cells[6, 3].Value = numDataInClasters;
-
-            worksheet.Cells[7, 2].Value = "Количество данных, не попавших в кластеры";
-            worksheet.Cells[7, 3].Value = (App.ContextOfData.Childrens_Info.Count() - numDataInClasters);
-
-            var currentRowIndex = 8;
-            if (App.ContextOfData.SelectedClasterisation == Clasterisation.Kohanen)
-            {
-                worksheet.Cells[currentRowIndex, 2].Value = "Скорость сходимости (p)";
-                worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.KohanenOptions.V;
-                currentRowIndex++;
-                worksheet.Cells[currentRowIndex, 2].Value = "Граница разрыва (p)";
-                worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.KohanenOptions.Rk;
-                currentRowIndex++;
-                worksheet.Cells[currentRowIndex, 2].Value = "Количество шагов (p)";
-                worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.KohanenOptions.Steps;
-                currentRowIndex++;
-            }
-            else
-            {
-                worksheet.Cells[currentRowIndex, 2].Value = "Радиус сходимости (p)";
-                worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.DBScanOptions.Eps;
-                currentRowIndex++;
-                worksheet.Cells[currentRowIndex, 2].Value = "Плотность точки (p)";
-                worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.DBScanOptions.MinPts;
-                currentRowIndex++;
-            }
-
-
-            (new ClasterisationProvider()).CalculateRandIndex(clasters, out string distributedInfo, out double randIndex);
-            worksheet.Cells[currentRowIndex, 2].Value = "Метрики";
-            worksheet.Cells[currentRowIndex, 3].Value = distributedInfo;
+            worksheet.Cells[currentRowIndex, 3].Value = numDataInClasters;
             currentRowIndex++;
 
-            worksheet.Cells[currentRowIndex, 2].Value = "Индекс Rand";
-            worksheet.Cells[currentRowIndex, 3].Value = Math.Round(randIndex, 2);
+            worksheet.Cells[currentRowIndex, 2].Value = "Количество данных, не попавших в метод";
+            worksheet.Cells[currentRowIndex, 3].Value = (App.ContextOfData.Childrens_Info.Count() - numDataInClasters);
             currentRowIndex++;
 
-            worksheet.Cells[currentRowIndex, 2, currentRowIndex, 3].Merge = true;
-            worksheet.Cells[currentRowIndex, 2].Value = "* (p) обозначает что поле отвечает за параметры кластеризации";
-            worksheet.Cells[currentRowIndex, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            worksheet.Cells[currentRowIndex, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            switch (App.ContextOfData.SelectedMethod)
+            {
+                case Method.Kohanen:
+                    {
+                        worksheet.Cells[currentRowIndex, 2].Value = "Скорость сходимости (p)";
+                        worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.KohanenOptions.V;
+                        currentRowIndex++;
+                        worksheet.Cells[currentRowIndex, 2].Value = "Граница разрыва (p)";
+                        worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.KohanenOptions.Rk;
+                        currentRowIndex++;
+                        worksheet.Cells[currentRowIndex, 2].Value = "Количество шагов (p)";
+                        worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.KohanenOptions.Steps;
+                        currentRowIndex++;
+                        break;
+                    }
+                case Method.DBScan:
+                    {
+                        worksheet.Cells[currentRowIndex, 2].Value = "Радиус сходимости (p)";
+                        worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.DBScanOptions.Eps;
+                        currentRowIndex++;
+                        worksheet.Cells[currentRowIndex, 2].Value = "Плотность точки (p)";
+                        worksheet.Cells[currentRowIndex, 3].Value = App.ContextOfData.DBScanOptions.MinPts;
+                        currentRowIndex++;
+                        break;
+                    }
+                case Method.Classification:
+                    {
+                        worksheet.Cells[currentRowIndex, 2].Value = "Класс 1";
+                        worksheet.Cells[currentRowIndex, 3].Value = "Отоакустическая эмиссия средне или высокочастотная, пороги ASSR 25 дБ и ниже, срок гестации до 33 недель." + Environment.NewLine +
+                            "Необходимо еще 2 раза пройти исследования слуховой функций до 6 мес и в 1 год жизни";
+                        worksheet.Cells[currentRowIndex, 3].Style.WrapText = true;
+                        currentRowIndex++;
 
+                        worksheet.Cells[currentRowIndex, 2].Value = "Класс 2";
+                        worksheet.Cells[currentRowIndex, 3].Value = "Отоакустическая эмиссия средне или высокочастотная, пороги ASSR 25 дБ и ниже, срок гестации больше 33 недель." + Environment.NewLine +
+                            "Обследование необходимо пройти однократно в период до 9 мес";
+                        worksheet.Cells[currentRowIndex, 3].Style.WrapText = true;
+                        currentRowIndex++;
+
+                        worksheet.Cells[currentRowIndex, 2].Value = "Класс 3";
+                        worksheet.Cells[currentRowIndex, 3].Value = "Отоакустическая эмиссия низкоамплитудная, пороги ASSR 25 дБ и ниже." + Environment.NewLine +
+                            "Необходимо провести исследование слуховой функции в период от 3 до 6, и 6 до 12 месяцев.\nЕсли слуховая функция улучшается или становиться прежней, то необходимо проверить слух через 1 год";
+                        worksheet.Cells[currentRowIndex, 3].Style.WrapText = true;
+                        currentRowIndex++;
+
+                        worksheet.Cells[currentRowIndex, 2].Value = "Класс 4";
+                        worksheet.Cells[currentRowIndex, 3].Value = "Отоакустическая эмиссия средне или высокочастотная, пороги ASSR выше 25 дБ, гестация до 36 недель." + Environment.NewLine +
+                            "Необходимо еще 2 раз пройти исследования слуховой функций до 9 мес." + Environment.NewLine +
+                            "При отсутствии улучшения или ухудшении показателей ASSR (пороги становятся еще выше), дети направляются в Сурдологический центр.";
+                        worksheet.Cells[currentRowIndex, 3].Style.WrapText = true;
+                        currentRowIndex++;
+
+                        worksheet.Cells[currentRowIndex, 2].Value = "Класс 5";
+                        worksheet.Cells[currentRowIndex, 3].Value = "Отоакустическая эмиссия средне или высокочастотная, пороги ASSR выше 25 дБ, гесация от 37 недель." + Environment.NewLine +
+                            "Необходимо еще 1 раз пройти исследования слуховой функций 6 мес и при отсутствии улучшения или ухудшении показателей ASSR (пороги становятся еще выше), он направляется в Сурдологический центр.";
+                        worksheet.Cells[currentRowIndex, 3].Style.WrapText = true;
+                        currentRowIndex++;
+
+                        worksheet.Cells[currentRowIndex, 2].Value = "Класс 6";
+                        worksheet.Cells[currentRowIndex, 3].Value = "Отоакустическая эмиссия низкоамплитудная, пороги ASSR выше 25 дБ и ниже, срок гестации до 36 недель." + Environment.NewLine +
+                            "Необходимо еще 2 раз пройти исследования слуховой функций до 9 мес.\nПри отсутствии улучшения или ухудшении показателей ASSR (пороги становятся еще выше), дети направляются в Сурдологический центр.";
+                        worksheet.Cells[currentRowIndex, 3].Style.WrapText = true;
+                        currentRowIndex++;
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+            if (App.ContextOfData.SelectedMethod != Method.Classification)
+            {
+
+                (new ClasterisationProvider()).CalculateRandIndex(clasters, out string distributedInfo, out double randIndex);
+                worksheet.Cells[currentRowIndex, 2].Value = "Метрики";
+                worksheet.Cells[currentRowIndex, 3].Value = distributedInfo;
+                currentRowIndex++;
+
+                worksheet.Cells[currentRowIndex, 2].Value = "Индекс Rand";
+                worksheet.Cells[currentRowIndex, 3].Value = Math.Round(randIndex, 2);
+                currentRowIndex++;
+
+                worksheet.Cells[currentRowIndex, 2, currentRowIndex, 3].Merge = true;
+                worksheet.Cells[currentRowIndex, 2].Value = "* (p) обозначает что поле отвечает за параметры кластеризации";
+                worksheet.Cells[currentRowIndex, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells[currentRowIndex, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            }
             worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+            if (App.ContextOfData.SelectedMethod == Method.Classification)
+            {
+                worksheet.Column(3).Width = 200;
+            }
 
             var range = worksheet.Cells[2, 2, currentRowIndex, 3];
             range.Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Black);
 
             for (int clastIndex = 0; clastIndex < clasters.Count; clastIndex++)
             {
-                worksheet.Cells[3 + clastIndex, 5].Value = App.ContextOfData.SelectedClasterisation == Clasterisation.DBScan && clastIndex == 0 ? "Шум" : $"{clastIndex + 1} кластер";
+                worksheet.Cells[3 + clastIndex, 5].Value = App.ContextOfData.SelectedMethod == Method.DBScan && clastIndex == 0 ? "Шум" :
+                                                           App.ContextOfData.SelectedMethod != Method.Classification ? $"{clastIndex + 1} кластер" :
+                                                            $"{clastIndex + 1} класс";
                 worksheet.Cells[3 + clastIndex, 6].Value = clasters[clastIndex].Length;
             }
             var chart = worksheet.Drawings.AddChart("PieChart", eChartType.Pie);
@@ -176,10 +240,10 @@ namespace NeuroCovid19.Extensions
 
         private static void GenerateAvarageDataInfo(ExcelPackage excelFile, List<DataCOVIDEars[]> clasters)
         {
-            var worksheet = excelFile.Workbook.Worksheets.Add($"Сводная информация по кластерам");
+            var worksheet = excelFile.Workbook.Worksheets.Add($"Сводная информация по кластерам/классам");
 
             worksheet.Cells[2, 2, 2, clasters.Count + 2].Merge = true;
-            worksheet.Cells[2, 2].Value = $"Средние значения по кластерам";
+            worksheet.Cells[2, 2].Value = $"Средние значения по кластерам/классам";
             worksheet.Cells[2, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             worksheet.Cells[2, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
@@ -187,10 +251,12 @@ namespace NeuroCovid19.Extensions
             for (int clastIndex = 0; clastIndex < clasters.Count; clastIndex++)
             {
                 avarageData.Add(new AvgCovidEars(clasters[clastIndex], clastIndex).GetData());
-                worksheet.Cells[3, clastIndex + 3].Value = App.ContextOfData.SelectedClasterisation == Clasterisation.DBScan && clastIndex == 0 ? "Шум" : $"{clastIndex + 1} Кластер";
+                worksheet.Cells[3, clastIndex + 3].Value = App.ContextOfData.SelectedMethod == Method.DBScan && clastIndex == 0 ? "Шум" :
+                                                           App.ContextOfData.SelectedMethod != Method.Classification ? $"{clastIndex + 1} Кластер" :
+                                                            $"{clastIndex + 1} Класс";
             }
 
-            var clasterisationProps = App.ContextOfData.SelectedClasterisation == Clasterisation.Kohanen ?  App.ContextOfData.KohanenOptions.Properties : App.ContextOfData.DBScanOptions.Properties;
+            var clasterisationProps = App.ContextOfData.SelectedMethod == Method.Kohanen ?  App.ContextOfData.KohanenOptions.Properties : App.ContextOfData.DBScanOptions.Properties;
             for (int propId = 0; propId < clasterisationProps.Count; propId++)
             {
                 var dataToInsert = new List<object>()
@@ -205,7 +271,7 @@ namespace NeuroCovid19.Extensions
                 worksheet.Cells[4 + propId, 2, 4 + propId, avarageData.Count + 2].LoadFromArrays(excelRow);
                 worksheet.Cells[4 + propId, 3, 4 + propId, avarageData.Count + 2].Style.Numberformat.Format = "0.00";
 
-                if (clasterisationProps[propId].IsUsed)
+                if (clasterisationProps[propId].IsUsed && App.ContextOfData.SelectedMethod != Method.Classification)
                 {
                     var rowRange = worksheet.Cells[4 + propId, 2, 4 + propId, avarageData.Count + 2];
                     rowRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -214,13 +280,19 @@ namespace NeuroCovid19.Extensions
                 }
             }
 
-            worksheet.Cells[4 + clasterisationProps.Count, 2, 4 + clasterisationProps.Count, avarageData.Count + 2].Merge = true;
-            worksheet.Cells[4 + clasterisationProps.Count, 2].Value = "* желтым цветом выделены признаки по которым произведена кластеризация";
-            worksheet.Cells[4 + clasterisationProps.Count, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            worksheet.Cells[4 + clasterisationProps.Count, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            var currentCellNum = 3 + clasterisationProps.Count;
+            if (App.ContextOfData.SelectedMethod != Method.Classification)
+            {
+                currentCellNum++;
+                worksheet.Cells[currentCellNum, 2, currentCellNum, avarageData.Count + 2].Merge = true;
+                worksheet.Cells[currentCellNum, 2].Value = "* желтым цветом выделены признаки по которым произведена кластеризация";
+                worksheet.Cells[currentCellNum, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells[currentCellNum, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            }
+
             worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 
-            var range = worksheet.Cells[2, 2, 4 + clasterisationProps.Count, avarageData.Count + 2];
+            var range = worksheet.Cells[2, 2, currentCellNum, avarageData.Count + 2];
             range.Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Black);
 
             var mapperForDiagrams = new ClasterisationProvider().MainMapperForPropIds;

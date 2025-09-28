@@ -57,11 +57,12 @@ namespace NeuroCovid19.MVVM.Model
         public AvgCovidEars(DataCOVIDEars[] data, int index)
         {
             var clProvider = new ClasterisationProvider();
-            _name = App.ContextOfData.SelectedClasterisation != Enumerations.Clasterisation.DBScan ?
+            _name = App.ContextOfData.SelectedMethod != Enumerations.Method.DBScan ?
                     (index + 1).ToString() + " кластер" :
                     (index == 0 ? "Шум" : index.ToString() + " кластер");
-            var numsOfEachProp = new int[clProvider.PropertiesData().Count - 1];
+            var numsOfEachProp = new int[clProvider.PropertiesData().Count];
 
+            var props = typeof(DataCOVIDEars).GetProperties();
             foreach (var item in data)
             {
                 for (int i = 0; i < numsOfEachProp.Length; i++)

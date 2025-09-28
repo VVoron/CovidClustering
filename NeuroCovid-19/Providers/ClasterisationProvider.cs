@@ -141,10 +141,10 @@ namespace NeuroCovid19.Providers
         {
             { "Отоакустическая эмиссия правого уха", 6 },
             { "Отоакустическая эмиссия левого уха", 9 },
-            { "ASSR правого уха", 26 },
-            { "ASSR левого уха", 31 },
-            { "КСВП правого уха (20)", 32 },
-            { "КСВП левого уха (20)", 35 },
+            { "ASSR правого уха", 16 },
+            { "ASSR левого уха", 21 },
+            { "КСВП правого уха (20)", 22 },
+            { "КСВП левого уха (20)", 25 },
         };
 
         public int[] ListShafle(int[] a)
@@ -163,9 +163,9 @@ namespace NeuroCovid19.Providers
         public List<int>[] colomnsToCheck =
         [
                     new List<int> { 9, 12 },
-                    new List<int> { 25, 26, 27, 28, 29, 30, 31, 32, 33, 34 },
-                    new List<int> { 35, 36, 37 },
-                    new List<int> { 38, 39, 40 }
+                    new List<int> { 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 },
+                    new List<int> { 25, 26, 27 },
+                    new List<int> { 28, 29, 30 }
         ];
 
         public double[] SelectedPropNormal(int indexProp, double time_observ, double gestagration)
@@ -218,7 +218,7 @@ namespace NeuroCovid19.Providers
             var allExamples = new List<DataCOVIDEars>();
             int clastIndex = 0;
 
-            bool isDBSCAN = App.ContextOfData.SelectedClasterisation == Enumerations.Clasterisation.DBScan;
+            bool isDBSCAN = App.ContextOfData.SelectedMethod == Enumerations.Method.DBScan;
 
             foreach (var cluster in clasters)
             {

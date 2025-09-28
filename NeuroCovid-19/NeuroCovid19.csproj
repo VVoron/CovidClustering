@@ -15,6 +15,12 @@
     <None Remove="Resources\icon.png" />
     <None Remove="Resources\Results.png" />
     <None Remove="Resources\Settings.png" />
+    <None Remove="synthetic_oae_assr.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="synthetic_oae_assr.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Charts.png" />

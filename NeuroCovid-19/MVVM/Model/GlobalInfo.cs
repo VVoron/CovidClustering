@@ -16,10 +16,10 @@ namespace NeuroCovid19.MVVM.Model
         public List<TableInfo> Table { get; set; }
         public GlobalInfo(int index, int count, AvgCovidEars table)
         {
-            Label = (App.ContextOfData.SelectedClasterisation == Enumerations.Clasterisation.DBScan ?
+            Label = (App.ContextOfData.SelectedMethod == Enumerations.Method.DBScan ?
                    index.ToString() : (index + 1).ToString()) + " кластер";
 
-            if (App.ContextOfData.SelectedClasterisation == Enumerations.Clasterisation.DBScan && index == 0)
+            if (App.ContextOfData.SelectedMethod == Enumerations.Method.DBScan && index == 0)
                 Label = "Шум";
             Value = count;
             Table = new List<TableInfo>();
@@ -27,7 +27,7 @@ namespace NeuroCovid19.MVVM.Model
             List<string> colomnsData = new ClasterisationProvider().PropertiesData();
             double[] data = table.GetData();
             Table.Add(new TableInfo { propertyName = "Количество", propertyValue = count });
-            var props = App.ContextOfData.SelectedClasterisation == Enumerations.Clasterisation.Kohanen ?
+            var props = App.ContextOfData.SelectedMethod == Enumerations.Method.Kohanen ?
                         App.ContextOfData.KohanenOptions.Properties :
                         App.ContextOfData.DBScanOptions.Properties;
             for (int i = 0; i < data.Length; i++)

@@ -62,25 +62,25 @@ namespace NeuroCovid19.MVVM.Model
             this._otoacoustic_l_num_nulls = (float)(data.OaeLeftNumNulls * props[11].Coef);
 
             //Assr
-            this._aSSR_r_05 = (float)(data.AssrRight_5 * props[22].Coef);
-            this._aSSR_r_1 = (float)(data.AssrRight_1 * props[23].Coef);
-            this._aSSR_r_2 = (float)(data.AssrRight_2 * props[24].Coef);
-            this._aSSR_r_4 = (float)(data.AssrRight_4 * props[25].Coef);
-            this._aSSR_r_avarage = (float)(data.AssrRight_avarage * props[26].Coef);
+            this._aSSR_r_05 = (float)(data.AssrRight_05 * props[12].Coef);
+            this._aSSR_r_1 = (float)(data.AssrRight_1 * props[13].Coef);
+            this._aSSR_r_2 = (float)(data.AssrRight_2 * props[14].Coef);
+            this._aSSR_r_4 = (float)(data.AssrRight_4 * props[15].Coef);
+            this._aSSR_r_avarage = (float)(data.AssrRight_avarage * props[16].Coef);
 
-            this._aSSR_l_05 = (float)(data.AssrLeft_5 * props[27].Coef);
-            this._aSSR_l_1 = (float)(data.AssrLeft_1 * props[28].Coef);
-            this._aSSR_l_2 = (float)(data.AssrLeft_2 * props[29].Coef);
-            this._aSSR_l_4 = (float)(data.AssrLeft_4 * props[30].Coef);
-            this._aSSR_l_avarage = (float)(data.AssrLeft_avarage * props[31].Coef);
+            this._aSSR_l_05 = (float)(data.AssrLeft_05 * props[17].Coef);
+            this._aSSR_l_1 = (float)(data.AssrLeft_1 * props[18].Coef);
+            this._aSSR_l_2 = (float)(data.AssrLeft_2 * props[19].Coef);
+            this._aSSR_l_4 = (float)(data.AssrLeft_4 * props[20].Coef);
+            this._aSSR_l_avarage = (float)(data.AssrLeft_avarage * props[21].Coef);
             //KSVP
-            this._kSVP_r_20 = (float)(data.KsvpRight_20 * props[32].Coef);
-            this._kSVP_r_40 = (float)(data.KsvpRight_40 * props[33].Coef);
-            this._kSVP_r_60 = (float)(data.KsvoRight_60 * props[34].Coef);
+            this._kSVP_r_20 = (float)(data.KsvpRight_20 * props[22].Coef);
+            this._kSVP_r_40 = (float)(data.KsvpRight_40 * props[23].Coef);
+            this._kSVP_r_60 = (float)(data.KsvoRight_60 * props[24].Coef);
 
-            this._kSVP_l_20 = (float)(data.KsvpLeft_20 * props[35].Coef);
-            this._kSVP_l_40 = (float)(data.KsvpLeft_40 * props[36].Coef);
-            this._kSVP_l_60 = (float)(data.KsvpLeft_60 * props[37].Coef);
+            this._kSVP_l_20 = (float)(data.KsvpLeft_20 * props[25].Coef);
+            this._kSVP_l_40 = (float)(data.KsvpLeft_40 * props[26].Coef);
+            this._kSVP_l_60 = (float)(data.KsvpLeft_60 * props[27].Coef);
         }
     }
 }

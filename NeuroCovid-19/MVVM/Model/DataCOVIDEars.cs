@@ -47,12 +47,12 @@ namespace NeuroCovid19.MVVM.Model
         private double OaeLeft35_45 { get; set; }
         private double OaeLeft45_55 { get; set; }
         //Assr
-        public double AssrRight_5 { get; set; }
+        public double AssrRight_05 { get; set; }
         public double AssrRight_1 { get; set; }
         public double AssrRight_2 { get; set; }
         public double AssrRight_4 { get; set; }
         public double AssrRight_avarage { get; set; }
-        public double AssrLeft_5 { get; set; }
+        public double AssrLeft_05 { get; set; }
         public double AssrLeft_1 { get; set; }
         public double AssrLeft_2 { get; set; }
         public double AssrLeft_4 { get; set; }
@@ -120,18 +120,18 @@ namespace NeuroCovid19.MVVM.Model
             OaeLeft35_45 = string.IsNullOrEmpty(array[25]) ? Double.NaN : Convert.ToDouble(array[25]);
             OaeLeft45_55 = string.IsNullOrEmpty(array[26]) ? Double.NaN : Convert.ToDouble(array[26]);
             
-            AssrRight_5 = string.IsNullOrEmpty(array[27]) ? Double.NaN : Convert.ToDouble(array[27]);
+            AssrRight_05 = string.IsNullOrEmpty(array[27]) ? Double.NaN : Convert.ToDouble(array[27]);
             AssrRight_1 = string.IsNullOrEmpty(array[28]) ? Double.NaN : Convert.ToDouble(array[28]);
             AssrRight_2 = string.IsNullOrEmpty(array[29]) ? Double.NaN : Convert.ToDouble(array[29]);
             AssrRight_4 = string.IsNullOrEmpty(array[30]) ? Double.NaN : Convert.ToDouble(array[30]);
-            notNull = new List<double> { AssrRight_5, AssrRight_1, AssrRight_2, AssrRight_4 }.Where(x => !double.IsNaN(x));
+            notNull = new List<double> { AssrRight_05, AssrRight_1, AssrRight_2, AssrRight_4 }.Where(x => !double.IsNaN(x));
             AssrRight_avarage = notNull.Any() ? Math.Round(notNull.Average(), 2) : Double.NaN;
 
-            AssrLeft_5 = string.IsNullOrEmpty(array[31]) ? Double.NaN : Convert.ToDouble(array[31]);
+            AssrLeft_05 = string.IsNullOrEmpty(array[31]) ? Double.NaN : Convert.ToDouble(array[31]);
             AssrLeft_1 = string.IsNullOrEmpty(array[32]) ? Double.NaN : Convert.ToDouble(array[32]);
             AssrLeft_2 = string.IsNullOrEmpty(array[33]) ? Double.NaN : Convert.ToDouble(array[33]);
             AssrLeft_4 = string.IsNullOrEmpty(array[34]) ? Double.NaN : Convert.ToDouble(array[34]);
-            notNull = new List<double> { AssrLeft_5, AssrLeft_1, AssrLeft_2, AssrLeft_4 }.Where(x => !double.IsNaN(x));
+            notNull = new List<double> { AssrLeft_05, AssrLeft_1, AssrLeft_2, AssrLeft_4 }.Where(x => !double.IsNaN(x));
             AssrLeft_avarage = notNull.Any() ? Math.Round(notNull.Average(), 2) : Double.NaN;
 
             KsvpRight_20 = string.IsNullOrEmpty(array[35]) ? Double.NaN : Convert.ToDouble(array[35]);
@@ -170,9 +170,18 @@ namespace NeuroCovid19.MVVM.Model
             return (float)((OaeRightAvarage + OaeLeftAvarage) / 2.0);
         }
 
+        public bool IsCorrectForClassification()
+        {
+            var isAnyIncorrect = Double.IsNaN(OaeRightAvarage) || Double.IsNaN(OaeLeftAvarage) ||
+                                 Double.IsNaN(OaeRight_1) || Double.IsNaN(OaeRight_2) || Double.IsNaN(OaeRight_4) || Double.IsNaN(OaeRight_6) ||
+                                 Double.IsNaN(OaeLeft_1) || Double.IsNaN(OaeLeft_2) || Double.IsNaN(OaeLeft_4) || Double.IsNaN(OaeLeft_6) ||
+                                 Double.IsNaN(AssrLeft_avarage) || Double.IsNaN(AssrRight_avarage);
+            return !isAnyIncorrect;
+        }
+
         public DataCOVIDEars(DataCOVIDEars[] data, int index)
         {
-            Name = App.ContextOfData.SelectedClasterisation != Enumerations.Clasterisation.DBScan ?
+            Name = App.ContextOfData.SelectedMethod != Enumerations.Method.DBScan ?
                     (index + 1).ToString() + " кластер" :
                     (index == 0 ? "Шум" : index.ToString() + " кластер");
             var numsOfEachProp = new int[DataForClasterisation().Length];
@@ -221,12 +230,12 @@ namespace NeuroCovid19.MVVM.Model
                                             OaeLeft25_35,
                                             OaeLeft35_45,
                                             OaeLeft45_55,*/
-                                            AssrRight_5,
+                                            AssrRight_05,
                                             AssrRight_1,
                                             AssrRight_2,
                                             AssrRight_4,
                                             AssrRight_avarage,
-                                            AssrLeft_5,
+                                            AssrLeft_05,
                                             AssrLeft_1,
                                             AssrLeft_2,
                                             AssrLeft_4,
@@ -267,12 +276,12 @@ namespace NeuroCovid19.MVVM.Model
                                             OaeLeft25_35.ToString(),
                                             OaeLeft35_45.ToString(),
                                             OaeLeft45_55.ToString(),*/
-                                            AssrRight_5.ToString(),
+                                            AssrRight_05.ToString(),
                                             AssrRight_1.ToString(),
                                             AssrRight_2.ToString(),
                                             AssrRight_4.ToString(),
                                             AssrRight_avarage.ToString(),
-                                            AssrLeft_5.ToString(),
+                                            AssrLeft_05.ToString(),
                                             AssrLeft_1.ToString(),
                                             AssrLeft_2.ToString(),
                                             AssrLeft_4.ToString(),
@@ -289,7 +298,7 @@ namespace NeuroCovid19.MVVM.Model
         public int GetAnomalyClass()
         {
             List<bool> propAnomalies = new List<bool>();
-            var props = App.ContextOfData.SelectedClasterisation == Enumerations.Clasterisation.Kohanen ? App.ContextOfData.KohanenOptions.Properties : App.ContextOfData.DBScanOptions.Properties;
+            var props = App.ContextOfData.SelectedMethod == Enumerations.Method.Kohanen ? App.ContextOfData.KohanenOptions.Properties : App.ContextOfData.DBScanOptions.Properties;
 
             if (props.Any(x => x.IsUsed && x.Name.Contains("ОАЭ")))
                 propAnomalies.Add((OaeLeftAvarage + OaeRightAvarage) / 2 >= 0.5);

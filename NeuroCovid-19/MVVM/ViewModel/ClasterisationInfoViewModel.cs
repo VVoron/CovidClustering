@@ -1,4 +1,5 @@
 ﻿using NeuroCovid19.Core;
+using NeuroCovid19.Enumerations;
 using NeuroCovid19.Functions;
 using NeuroCovid19.MVVM.Model;
 using NeuroCovid19.MVVM.View;
@@ -55,7 +56,7 @@ namespace NeuroCovid19.MVVM.ViewModel
             }
             set
             {
-                App.ContextOfData.SelectedClasterisation = (Enumerations.Clasterisation)value;
+                App.ContextOfData.SelectedMethod = (Enumerations.Method)value;
                 _selectedClasterisaton = (int)value;
                 SelectClastVM();
                 OnPropertyChanged();
@@ -64,15 +65,18 @@ namespace NeuroCovid19.MVVM.ViewModel
 
         private void SelectClastVM()
         {
-            switch (App.ContextOfData.SelectedClasterisation)
+            switch (App.ContextOfData.SelectedMethod)
             {
-                case Enumerations.Clasterisation.Kohanen:
+                case Enumerations.Method.Kohanen:
                     CurrentClasterisationView = KohanenPropertiesVM;
                     break;
-                case Enumerations.Clasterisation.DBScan:
+                case Enumerations.Method.DBScan:
                     CurrentClasterisationView = DBScanPropertiesVM;
                     break;
                 default:
+                    App.ContextOfData.SelectedMethod = Enumerations.Method.Kohanen;
+                    SelectClastVM();
+                    OnPropertyChanged(nameof(SelectedClasterisation));
                     break;
             }
         }
@@ -82,7 +86,12 @@ namespace NeuroCovid19.MVVM.ViewModel
             KohanenPropertiesVM = new KohanenPropertiesViewModel();
             DBScanPropertiesVM = new DBScanPropertiesViewModel();
 
-            SelectedClasterisation = (int)App.ContextOfData.SelectedClasterisation;
+            if (App.ContextOfData.SelectedMethod == Method.Classification)
+            {
+                App.ContextOfData.SelectedMethod = Method.Kohanen;
+            }
+
+            SelectedClasterisation = (int)App.ContextOfData.SelectedMethod;
 
             ClasterisationComboBox = new List<string>() { "Кохонен", "DBScan" };
             SelectClastVM();

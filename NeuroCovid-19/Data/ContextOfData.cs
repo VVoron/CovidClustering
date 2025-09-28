@@ -15,10 +15,17 @@ namespace NeuroCovid19.Data
         public List<DataCOVIDEars> Childrens_Info;
         public KohanenOptions KohanenOptions;
         public DBScanOptions DBScanOptions;
-        public Clasterisation SelectedClasterisation;
-        public int[] PropIdsForTake = [0, 1, 2, 3, 4, 5, 6, 9, 26, 31, 32, 35];
 
-        public string SelectedClasterisationString => SelectedClasterisation == Clasterisation.Kohanen ? "Кохонен" : "DBSCAN";
+        // Классификация не требует особых настроек, храним пока что здесь
+        public Method SelectedMethod;
+        public int SelectedClass;
+
+        public List<DataCOVIDEars[]> ClassificationClasses { get; set; }
+        public int[] PropIdsForTake = [0, 1, 2, 3, 4, 5, 6, 9, 16, 21, 22, 25];
+
+        public string SelectedClasterisationString => SelectedMethod == Method.Kohanen ? "Кохонен" :
+                                                      SelectedMethod == Method.DBScan  ? "DBSCAN" :
+                                                      "Классификация";
 
         public ContextOfData()
         {
@@ -28,7 +35,9 @@ namespace NeuroCovid19.Data
             KohanenOptions = new KohanenOptions();
             DBScanOptions = new DBScanOptions();
 
-            SelectedClasterisation = Clasterisation.Kohanen;
+            ClassificationClasses = new List<DataCOVIDEars[]>();
+
+            SelectedMethod = Method.Kohanen;
         }
     }
 }
