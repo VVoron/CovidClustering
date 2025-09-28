@@ -17,7 +17,9 @@ namespace NeuroCovid19.Options
         public List<DataCOVIDEars>? W { get; set; }
         public List<PropertiesModel> Properties { get; set; }
         public List<DataCOVIDEars[]> ClastersInfo { get; set; }
+        public List<List<DataCOVIDEars>> ClassificationInfo { get; set; }
         public int SelectedClaster { get; set; }
+        public int SelectedClassificationClass { get; set; }
 
         public KohanenOptions()
         {
@@ -27,6 +29,7 @@ namespace NeuroCovid19.Options
             W = new List<DataCOVIDEars>();
             Properties = new List<PropertiesModel>();
             ClastersInfo = new List<DataCOVIDEars[]>();
+            ClassificationInfo = new List<List<DataCOVIDEars>>();
         }
     }
 }

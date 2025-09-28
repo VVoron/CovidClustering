@@ -65,7 +65,7 @@ namespace NeuroCovid19.Extensions
                                     if (clasterisationProvider.colomnsToCheck.Any(x => x.Contains(i)))
                                     {
                                         worksheet.Cells[k, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                        worksheet.Cells[k, i + 1].Style.Fill.BackgroundColor.SetColor(GetColorForCells(clasterisationProvider, info, i, item.Time_observation, item.Time_gestagration));
+                                        worksheet.Cells[k, i + 1].Style.Fill.BackgroundColor.SetColor(GetColorForCells(clasterisationProvider, info, i, item.TimeObservation, item.TimeGestagration));
                                     }
                                 }
                                 else
