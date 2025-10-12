@@ -47,16 +47,17 @@ namespace NeuroCovid19.Extensions
 
                     GenerateFirstPage(excelFile, clasters);
                     GenerateAvarageDataInfo(excelFile, clasters);
+                    GenerateAiPage(excelFile, clasters);
 
                     for (int clastIndex = 0; clastIndex < clasters.Count(); clastIndex++)
                     {
                         var claster = clasters[clastIndex];
-                        var worksheet = excelFile.Workbook.Worksheets.Add(App.ContextOfData.SelectedMethod == Method.DBScan  && clastIndex == 0 ? "Шум" : $"{clastIndex + 1} Кластер");
+                        var worksheet = excelFile.Workbook.Worksheets.Add(claster.Name);
                         for (int i = 0; i < dataColumns.Count; i++)
                             worksheet.Cells[1, i + 1].Value = dataColumns[i];
                         int k = 2;
 
-                        foreach (DataCOVIDEars item in claster)
+                        foreach (DataCOVIDEars item in claster.Items)
                         {
                             var info = item.GetAllData();
                             for (int i = 0; i < info.Count(); i++)
@@ -87,7 +88,7 @@ namespace NeuroCovid19.Extensions
             }
         }
 
-        private static void GenerateFirstPage(ExcelPackage excelFile, List<DataCOVIDEars[]> clasters)
+        private static void GenerateFirstPage(ExcelPackage excelFile, List<ClasterInfo> clasters)
         {
             var worksheet = excelFile.Workbook.Worksheets.Add($"Информация по отчету");
 
@@ -115,7 +116,7 @@ namespace NeuroCovid19.Extensions
             }
 
             worksheet.Cells[currentRowIndex, 2].Value = "Количество используемых данных";
-            var numDataInClasters = clasters.Sum(x => x.Length);
+            var numDataInClasters = clasters.Sum(x => x.Items.Length);
             worksheet.Cells[currentRowIndex, 3].Value = numDataInClasters;
             currentRowIndex++;
 
@@ -221,10 +222,8 @@ namespace NeuroCovid19.Extensions
 
             for (int clastIndex = 0; clastIndex < clasters.Count; clastIndex++)
             {
-                worksheet.Cells[3 + clastIndex, 5].Value = App.ContextOfData.SelectedMethod == Method.DBScan && clastIndex == 0 ? "Шум" :
-                                                           App.ContextOfData.SelectedMethod != Method.Classification ? $"{clastIndex + 1} кластер" :
-                                                            $"{clastIndex + 1} класс";
-                worksheet.Cells[3 + clastIndex, 6].Value = clasters[clastIndex].Length;
+                worksheet.Cells[3 + clastIndex, 5].Value = clasters[clastIndex].Name;
+                worksheet.Cells[3 + clastIndex, 6].Value = clasters[clastIndex].Items.Length;
             }
             var chart = worksheet.Drawings.AddChart("PieChart", eChartType.Pie);
             chart.SetPosition(2, 0, 4, 0);
@@ -238,7 +237,7 @@ namespace NeuroCovid19.Extensions
             chart.Title.Text = "Количественная диаграмма";
         }
 
-        private static void GenerateAvarageDataInfo(ExcelPackage excelFile, List<DataCOVIDEars[]> clasters)
+        private static void GenerateAvarageDataInfo(ExcelPackage excelFile, List<ClasterInfo> clasters)
         {
             var worksheet = excelFile.Workbook.Worksheets.Add($"Сводная информация по кластерам/классам");
 
@@ -250,10 +249,8 @@ namespace NeuroCovid19.Extensions
             var avarageData = new List<double[]>();
             for (int clastIndex = 0; clastIndex < clasters.Count; clastIndex++)
             {
-                avarageData.Add(new AvgCovidEars(clasters[clastIndex], clastIndex).GetData());
-                worksheet.Cells[3, clastIndex + 3].Value = App.ContextOfData.SelectedMethod == Method.DBScan && clastIndex == 0 ? "Шум" :
-                                                           App.ContextOfData.SelectedMethod != Method.Classification ? $"{clastIndex + 1} Кластер" :
-                                                            $"{clastIndex + 1} Класс";
+                avarageData.Add(new AvgCovidEars(clasters[clastIndex].Name, clasters[clastIndex].Items, clastIndex).GetData());
+                worksheet.Cells[3, clastIndex + 3].Value = clasters[clastIndex].Name;
             }
 
             var clasterisationProps = App.ContextOfData.SelectedMethod == Method.Kohanen ?  App.ContextOfData.KohanenOptions.Properties : App.ContextOfData.DBScanOptions.Properties;
@@ -315,6 +312,23 @@ namespace NeuroCovid19.Extensions
 
                 chart.Legend.Remove();
                 chartNumber++;
+            }
+        }
+
+        private static void GenerateAiPage(ExcelPackage excelFile, List<ClasterInfo> clasters)
+        {
+            var worksheet = excelFile.Workbook.Worksheets.Add($"Характеристика ИИ по кластерам/классам");
+
+            int colNumber = 2;
+            foreach (var claster in clasters)
+            {
+                worksheet.Cells[2, colNumber].Value = claster.Name;
+                worksheet.Cells[2, colNumber].Style.Font.Bold = true;
+                worksheet.Cells[3, colNumber].Value = claster.DeepseekAnalysis;
+                worksheet.Cells[3, colNumber].Style.WrapText = true;
+                worksheet.Cells[3, colNumber].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                worksheet.Column(colNumber).Width = 90;
+                colNumber++;
             }
         }
 

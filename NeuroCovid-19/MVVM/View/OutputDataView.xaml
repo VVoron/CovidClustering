@@ -27,6 +27,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <ComboBox ItemsSource="{Binding ClasterisationComboBox}"
                               SelectedIndex="{Binding SelectedClasterisation}"
@@ -78,6 +79,20 @@
                             </Style>
                         </Button.Resources>
                     </Button>
+                    <Button Grid.Column="3" 
+                            Padding="8,4"
+                            Margin="2,0"
+                            Background="#FFCCEFFF"
+                            BorderBrush="#FF3399FF"
+                            BorderThickness="1"
+                            Command="{Binding RelayAIData}" 
+                            Content="ИИ анализ кластера">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
 
                     <Border CornerRadius="50"
                             Width="15"
@@ -87,7 +102,7 @@
                             BorderThickness="1"
                             MouseEnter="OpenInfoTooltip"
                             MouseLeave="CloseInfoTooltip"
-                            Grid.Column="3">
+                            Grid.Column="4">
                         <TextBlock FontStyle="Italic"
                                    Height="15"
                                    Width="15" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5.5,0,0,0">

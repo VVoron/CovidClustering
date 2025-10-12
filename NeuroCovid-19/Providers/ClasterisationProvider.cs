@@ -211,7 +211,7 @@ namespace NeuroCovid19.Providers
             return null;
         }
 
-        public string CalculateRandIndex(List<DataCOVIDEars[]> clasters, out string distributedInfo, out double randIndex)
+        public string CalculateRandIndex(List<ClasterInfo> clasters, out string distributedInfo, out double randIndex)
         {
             int TP = 0, FP = 0, FN = 0, TN = 0;
 
@@ -225,7 +225,7 @@ namespace NeuroCovid19.Providers
                 clastIndex++;
                 if (isDBSCAN && clastIndex < 2)
                     continue;
-                allExamples.AddRange(cluster);
+                allExamples.AddRange(cluster.Items);
             }
 
             // Подсчитываем все пары
@@ -239,7 +239,7 @@ namespace NeuroCovid19.Providers
                     // Проверяем принадлежность к одному кластеру
                     foreach (var cluster in clasters)
                     {
-                        if (cluster.Contains(allExamples[i]) && cluster.Contains(allExamples[j]))
+                        if (cluster.Items.Contains(allExamples[i]) && cluster.Items.Contains(allExamples[j]))
                         {
                             sameCluster = true;
                             break;

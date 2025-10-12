@@ -9,6 +9,6 @@ namespace NeuroCovid19.Interfaces
 {
     public interface IClasterisation
     {
-        public List<DataCOVIDEars[]> Clasters { get; set; }
+        public List<ClasterInfo> Clasters { get; set; }
     }
 }

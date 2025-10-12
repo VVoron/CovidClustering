@@ -13,7 +13,7 @@ namespace NeuroCovid19.Options
         public double MinPts { get; set; }
         public double Eps { get; set; }
         public List<PropertiesModel> Properties { get; set; }
-        public List<DataCOVIDEars[]> ClastersInfo { get; set; }
+        public List<ClasterInfo> ClastersInfo { get; set; }
         public int SelectedClaster { get; set; }
         public DBScanOptions()
         {
@@ -21,7 +21,7 @@ namespace NeuroCovid19.Options
             Eps = 2;
             SelectedClaster = 1;
             Properties = new List<PropertiesModel>();
-            ClastersInfo = new List<DataCOVIDEars[]>();
+            ClastersInfo = new List<ClasterInfo>();
         }
     }
 }

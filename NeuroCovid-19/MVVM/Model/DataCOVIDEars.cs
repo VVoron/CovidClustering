@@ -179,33 +179,6 @@ namespace NeuroCovid19.MVVM.Model
             return !isAnyIncorrect;
         }
 
-        public DataCOVIDEars(DataCOVIDEars[] data, int index)
-        {
-            Name = App.ContextOfData.SelectedMethod != Enumerations.Method.DBScan ?
-                    (index + 1).ToString() + " кластер" :
-                    (index == 0 ? "Шум" : index.ToString() + " кластер");
-            var numsOfEachProp = new int[DataForClasterisation().Length];
-
-            foreach (var item in data)
-            {
-                for (int i = 0; i < numsOfEachProp.Length; i++)
-                {
-                    double value = (double)item.GetPropertyValueById(i + 3);
-                    if (!double.IsNaN(value))
-                    {
-                        this.InsertValueOfDouble(i + 3, this.GetPropertyValueById(i + 3) + value);
-
-                        numsOfEachProp[i]++;
-                    }
-                }
-            }
-            for (int i = 0; i < numsOfEachProp.Length; i++)
-            {
-                if (numsOfEachProp[i] != 0)
-                    this.InsertValueOfDouble(i + 3, Math.Round(this.GetPropertyValueById(i + 3) / numsOfEachProp[i], 2));
-            }
-        }
-
         public double[] DataForClasterisation()
         {
             return new double[]  {          Mother,
@@ -293,6 +266,44 @@ namespace NeuroCovid19.MVVM.Model
                                             KsvpLeft_40.ToString(),
                                             KsvpLeft_60.ToString(),
             };
+        }
+
+        public string[] DataForAI
+        {
+            get
+            {
+                return
+                    [
+                        TimeGestagration.ToString(),
+                    TimeObservation.ToString(),
+                    OaeRight_1.ToString(),
+                    OaeRight_2.ToString(),
+                    OaeRight_4.ToString(),
+                    OaeRight_6.ToString(),
+
+                    OaeLeft_1.ToString(),
+                    OaeLeft_2.ToString(),
+                    OaeLeft_4.ToString(),
+                    OaeLeft_6.ToString(),
+
+                    AssrRight_05.ToString(),
+                    AssrRight_1.ToString(),
+                    AssrRight_2.ToString(),
+                    AssrRight_4.ToString(),
+
+                    AssrLeft_05.ToString(),
+                    AssrLeft_1.ToString(),
+                    AssrLeft_2.ToString(),
+                    AssrLeft_4.ToString(),
+
+                    KsvpRight_20.ToString(),
+                    KsvpRight_40.ToString(),
+                    KsvoRight_60.ToString(),
+                    KsvpLeft_20.ToString(),
+                    KsvpLeft_40.ToString(),
+                    KsvpLeft_60.ToString()
+                    ];
+            }
         }
 
         public int GetAnomalyClass()

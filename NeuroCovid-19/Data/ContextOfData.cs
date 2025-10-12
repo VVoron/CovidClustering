@@ -20,7 +20,7 @@ namespace NeuroCovid19.Data
         public Method SelectedMethod;
         public int SelectedClass;
 
-        public List<DataCOVIDEars[]> ClassificationClasses { get; set; }
+        public List<ClasterInfo> ClassificationClasses { get; set; }
         public int[] PropIdsForTake = [0, 1, 2, 3, 4, 5, 6, 9, 16, 21, 22, 25];
 
         public string SelectedClasterisationString => SelectedMethod == Method.Kohanen ? "Кохонен" :
@@ -35,7 +35,7 @@ namespace NeuroCovid19.Data
             KohanenOptions = new KohanenOptions();
             DBScanOptions = new DBScanOptions();
 
-            ClassificationClasses = new List<DataCOVIDEars[]>();
+            ClassificationClasses = new List<ClasterInfo>();
 
             SelectedMethod = Method.Kohanen;
         }

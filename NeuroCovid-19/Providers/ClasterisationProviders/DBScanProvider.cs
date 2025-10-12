@@ -17,10 +17,11 @@ namespace NeuroCovid19.Providers
         private double _minPts;
         private double _eps;
         private List<DBScanPoint> _allPoints;
+        public List<ClasterInfo> Clasters { get; set; }
 
-        public List<DataCOVIDEars[]> Clasters { get; set; }
-
-        public DBScanProvider() { }
+        public DBScanProvider() 
+        {
+        }
 
         public DBScanProvider(List<DataCOVIDEars> data)
         {
@@ -30,7 +31,7 @@ namespace NeuroCovid19.Providers
             var dataPoints = ClasterVisualisationExtension.GetGraphPoints(new List<DataCOVIDEars[]>() { data.ToArray() }, App.ContextOfData.DBScanOptions.Properties);
 
             _allPoints = new List<DBScanPoint>();
-            Clasters = new List<DataCOVIDEars[]>();
+            Clasters = new List<ClasterInfo>();
 
             for (int i = 0; i < dataPoints.Count; i++)
             {
@@ -57,9 +58,13 @@ namespace NeuroCovid19.Providers
 
             // Первый кластер - шум
             for (int i = 0; i <= numClasters; i++)
-            {
-                Clasters.Add(_allPoints.Where(x => x.Claster == i)
-                                       .Select(x => x.data).ToArray());
+            {   
+                Clasters.Add(new ClasterInfo()
+                {
+                    Name = i == 0 ? "Шум" : $"{i + 1} кластер",
+                    Items = _allPoints.Where(x => x.Claster == i)
+                                       .Select(x => x.data).ToArray()
+                });
             }
 
             App.ContextOfData.DBScanOptions.ClastersInfo = Clasters;

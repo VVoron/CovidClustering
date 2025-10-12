@@ -83,7 +83,7 @@ namespace NeuroCovid19.MVVM.ViewModel
         }
 
 
-        private List<DataCOVIDEars[]> _clastersData { get; set; }
+        private List<ClasterInfo> _clastersData { get; set; }
 
 
         public ChartValues<TableInfo> PointsProperty { get; set; }
@@ -105,9 +105,7 @@ namespace NeuroCovid19.MVVM.ViewModel
 
                 PointsProperty.Add(new TableInfo
                 {
-                    propertyName = App.ContextOfData.SelectedMethod != Enumerations.Method.DBScan ? 
-                                  (i + 1).ToString() + " кластер":
-                                  (i == 0 ? "Шум" : i.ToString() + " кластер"),
+                    propertyName = _clastersData[i].Name,
                     propertyValue = (_selected_variant == 1) ? Dispersion(i, AvarageData[i].GetData()[(int)_select_property]) : AvarageData[i].GetData()[(int)_select_property]
                 });
                 ColumnsProperty = new List<string>(PointsProperty.Select(info => info.propertyName));
@@ -127,7 +125,7 @@ namespace NeuroCovid19.MVVM.ViewModel
 
             double dispersion = 0;
             int num_elements = 0;
-            DataCOVIDEars[] data = _clastersData[index];
+            DataCOVIDEars[] data = _clastersData[index].Items;
             for (int i = 0; i < data.Length; i++)
             {
                 if (double.IsNaN(data[i].DataForClasterisation()[(int)_select_property]))
@@ -153,8 +151,8 @@ namespace NeuroCovid19.MVVM.ViewModel
                 ChartPoints = new ChartValues<GlobalInfo>();
                 for (int i = 0; i < _clastersData.Count; i++)
                 {
-                    AvarageData.Add(new AvgCovidEars(_clastersData[i], i));
-                    ChartPoints.Add(new GlobalInfo(i, _clastersData[i].Length, AvarageData.ElementAt(i)));
+                    AvarageData.Add(new AvgCovidEars(_clastersData[i].Name, _clastersData[i].Items, i));
+                    ChartPoints.Add(new GlobalInfo(_clastersData[i].Name, i, _clastersData[i].Items.Length, AvarageData.ElementAt(i)));
                 }
                 Columns = new List<string>(ChartPoints.Select(info => info.Label));
 

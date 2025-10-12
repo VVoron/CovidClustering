@@ -64,7 +64,7 @@ namespace NeuroCovid19.MVVM.ViewModel
         private void GetPoints()
         {
             _series = new SeriesCollection();
-            List<DataCOVIDEars[]> clasters = null;
+            List<ClasterInfo> clasters = null;
             List<PropertiesModel> properties = null;
             Enumerations.Method method = Enumerations.Method.Kohanen;
             switch (App.ContextOfData.SelectedMethod)
@@ -91,30 +91,14 @@ namespace NeuroCovid19.MVVM.ViewModel
               || properties == null || !properties.Any())
                 return;
 
-            var points = ClasterVisualisationExtension.GetGraphPoints(clasters, properties);
+            var points = ClasterVisualisationExtension.GetGraphPoints(clasters.Select(x => x.Items).ToList(), properties);
             if (points == null)
                 return;
             for (int clastIndex = 0; clastIndex < clasters.Count; clastIndex++)
             {
-                var title = string.Empty;
-                if (method != Enumerations.Method.Classification) {
-                    if (clastIndex != 0 || method == Enumerations.Method.Kohanen)
-                    {
-                        title = $"{clastIndex + 1} кластер";
-                    }
-                    else
-                    {
-                        title = "Шум";
-                    }
-                }
-                else
-                {
-                    title = $"{clastIndex + 1} класс";
-                }
-
                 var ScatterSeries = new ScatterSeries
                 {
-                    Title = title,
+                    Title = clasters[clastIndex].Name,
                     Values = new ChartValues<ObservablePoint>(),
                     PointGeometry = DefaultGeometries.Circle
                 };

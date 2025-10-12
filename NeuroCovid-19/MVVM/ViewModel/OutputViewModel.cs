@@ -28,6 +28,7 @@ namespace NeuroCovid19.MVVM.ViewModel
         public RelayCommand ChangeInitDataByClaster { get; set; }
         public RelayCommand GetExcelOutput { get; set; }
         public RelayCommand GetReportOutput { get; set; }
+        public RelayCommand RelayAIData { get; set; }
         private DataCOVIDEars[]? _data { get; set; }
         public object Load
         {
@@ -74,15 +75,15 @@ namespace NeuroCovid19.MVVM.ViewModel
                     {
                         case Method.Kohanen:
                             App.ContextOfData.KohanenOptions.SelectedClaster = _selectedClaster;
-                            Data = App.ContextOfData.KohanenOptions.ClastersInfo[_selectedClaster];
+                            Data = App.ContextOfData.KohanenOptions.ClastersInfo[_selectedClaster].Items;
                             break;
                         case Method.DBScan:
                             App.ContextOfData.DBScanOptions.SelectedClaster = _selectedClaster;
-                            Data = App.ContextOfData.DBScanOptions.ClastersInfo[_selectedClaster];
+                            Data = App.ContextOfData.DBScanOptions.ClastersInfo[_selectedClaster].Items;
                             break;
                         case Method.Classification:
                             App.ContextOfData.SelectedClass = _selectedClaster;
-                            Data = App.ContextOfData.ClassificationClasses[_selectedClaster];
+                            Data = App.ContextOfData.ClassificationClasses[_selectedClaster].Items;
                             break;
                         default:
                             break;
@@ -131,6 +132,7 @@ namespace NeuroCovid19.MVVM.ViewModel
                 OnPropertyChanged();
             }
         }
+
         public Visibility CoefStudyVisible { get; set; }
 
         public Visibility SelfStudyVisible { get; set; }
@@ -198,7 +200,7 @@ namespace NeuroCovid19.MVVM.ViewModel
                 default:
                     break;
             }
-            FinalStageOfStudy(clasterisation.Clasters);
+            await FinalStageOfStudy(clasterisation.Clasters);
 
             SelectedClaster = 0;
             OnPropertyChanged(nameof(ClasterComboBox));
@@ -215,7 +217,7 @@ namespace NeuroCovid19.MVVM.ViewModel
             var metrics = classificationProvider.StartClassification();
             classificationProvider.DoClassificationForData(correctData);
 
-            FinalStageOfStudy(App.ContextOfData.ClassificationClasses);
+            await FinalStageOfStudy(App.ContextOfData.ClassificationClasses);
             OnPropertyChanged(nameof(ClasterComboBox));
             OnPropertyChanged(nameof(SelectedClaster));
             OnPropertyChanged(nameof(Data));
@@ -234,14 +236,17 @@ namespace NeuroCovid19.MVVM.ViewModel
 
             var w = GetWCoefs(countProps);
             kohanen.StudyWithW(DataWithSkipping, _allNormalizeData, w);
-            FinalStageOfStudy(kohanen.Clasters);
+            await FinalStageOfStudy(kohanen.Clasters);
 
             SelectedClaster = 0;
             await Task.Delay(1500);
         }
 
-        private void FinalStageOfStudy(List<DataCOVIDEars[]> clasters)
+        private async Task FinalStageOfStudy(List<ClasterInfo> clasters)
         {
+            var analyzerProvider = new AIAnalyzerProvider();
+            await analyzerProvider.AnalyzeClustersAsync(clasters);
+
             List<string> clastComboBox = new List<string>();
             for (int i = 0; i < clasters.Count; i++)
             {
@@ -309,13 +314,8 @@ namespace NeuroCovid19.MVVM.ViewModel
                     _properties = App.ContextOfData.KohanenOptions.Properties;
                     if (App.ContextOfData.KohanenOptions.ClastersInfo != null && App.ContextOfData.KohanenOptions.ClastersInfo.Any())
                     {
-                        List<string> clastComboBox = new List<string>();
-                        for (int i = 0; i < App.ContextOfData.KohanenOptions.ClastersInfo.Count; i++)
-                            clastComboBox.Add((i + 1).ToString() + " кластер");
-
-
                         SelectedClaster = App.ContextOfData.KohanenOptions.SelectedClaster;
-                        ClasterComboBox = clastComboBox;
+                        ClasterComboBox = App.ContextOfData.KohanenOptions.ClastersInfo.Select(x => x.Name).OrderBy(x => x).ToList();
                     }
                     break;
                 case Method.DBScan:
@@ -325,13 +325,8 @@ namespace NeuroCovid19.MVVM.ViewModel
                     _properties = App.ContextOfData.DBScanOptions.Properties;
                     if (App.ContextOfData.DBScanOptions.ClastersInfo != null && App.ContextOfData.DBScanOptions.ClastersInfo.Any())
                     {
-                        List<string> clastComboBox = new List<string>();
-                        for (int i = 0; i < App.ContextOfData.DBScanOptions.ClastersInfo.Count; i++)
-                            clastComboBox.Add(i == 0 ? "Шум" : i.ToString() + " кластер");
-
-
                         SelectedClaster = App.ContextOfData.DBScanOptions.SelectedClaster;
-                        ClasterComboBox = clastComboBox;
+                        ClasterComboBox = App.ContextOfData.DBScanOptions.ClastersInfo.Select(x => x.Name).OrderBy(x => x).ToList();
                     }
                     break;
                 case Method.Classification:
@@ -340,13 +335,8 @@ namespace NeuroCovid19.MVVM.ViewModel
                     ClassificationVisible = Visibility.Visible;
                     if (App.ContextOfData.ClassificationClasses != null && App.ContextOfData.ClassificationClasses.Any())
                     {
-                        List<string> clastComboBox = new List<string>();
-                        for (int i = 0; i < App.ContextOfData.ClassificationClasses.Count; i++)
-                            clastComboBox.Add(i.ToString() + " класс");
-
-
-                        SelectedClaster = App.ContextOfData.DBScanOptions.SelectedClaster;
-                        ClasterComboBox = clastComboBox;
+                        SelectedClaster = App.ContextOfData.SelectedClass;
+                        ClasterComboBox = App.ContextOfData.ClassificationClasses.Select(x => x.Name).OrderBy(x => x).ToList();
                     }
                     break;
                 default:
@@ -451,15 +441,15 @@ namespace NeuroCovid19.MVVM.ViewModel
                 {
                     case Method.Kohanen:
                         if (App.ContextOfData.KohanenOptions.ClastersInfo != null && App.ContextOfData.KohanenOptions.ClastersInfo.Any())
-                            App.ContextOfData.Childrens_Info = App.ContextOfData.KohanenOptions.ClastersInfo[App.ContextOfData.KohanenOptions.SelectedClaster].ToList();
+                            App.ContextOfData.Childrens_Info = App.ContextOfData.KohanenOptions.ClastersInfo[App.ContextOfData.KohanenOptions.SelectedClaster].Items.ToList();
                         break;
                     case Method.DBScan:
                         if (App.ContextOfData.DBScanOptions.ClastersInfo != null && App.ContextOfData.DBScanOptions.ClastersInfo.Any())
-                            App.ContextOfData.Childrens_Info = App.ContextOfData.DBScanOptions.ClastersInfo[App.ContextOfData.DBScanOptions.SelectedClaster].ToList();
+                            App.ContextOfData.Childrens_Info = App.ContextOfData.DBScanOptions.ClastersInfo[App.ContextOfData.DBScanOptions.SelectedClaster].Items.ToList();
                         break;
                     case Method.Classification:
                         if (App.ContextOfData.DBScanOptions.ClastersInfo != null && App.ContextOfData.ClassificationClasses.Any())
-                            App.ContextOfData.Childrens_Info = App.ContextOfData.ClassificationClasses[App.ContextOfData.SelectedClass].ToList();
+                            App.ContextOfData.Childrens_Info = App.ContextOfData.ClassificationClasses[App.ContextOfData.SelectedClass].Items.ToList();
                         break;
                 }
             });
@@ -472,6 +462,44 @@ namespace NeuroCovid19.MVVM.ViewModel
             GetReportOutput = new RelayCommand(x =>
             {
                 GetClasterReport();
+            });
+
+            RelayAIData = new RelayCommand(x =>
+            {
+                string aiData = string.Empty;
+
+                try
+                {
+
+                    switch ((Method)_selectedClasterisaton)
+                    {
+                        case Method.Kohanen:
+                            App.ContextOfData.KohanenOptions.SelectedClaster = _selectedClaster;
+                            aiData = App.ContextOfData.KohanenOptions.ClastersInfo[_selectedClaster].DeepseekAnalysis;
+                            break;
+                        case Method.DBScan:
+                            App.ContextOfData.DBScanOptions.SelectedClaster = _selectedClaster;
+                            aiData = App.ContextOfData.DBScanOptions.ClastersInfo[_selectedClaster].DeepseekAnalysis;
+                            break;
+                        case Method.Classification:
+                            App.ContextOfData.SelectedClass = _selectedClaster;
+                            aiData = App.ContextOfData.ClassificationClasses[_selectedClaster].DeepseekAnalysis;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (string.IsNullOrEmpty(aiData))
+                    {
+                        throw new Exception("No data");
+                    }
+
+                    MessageBox.Show(aiData, "Характеристика от ИИ", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Информации от ИИ нет, попробуйте провести кластеризацию/классификацию заново", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             });
         }
     }

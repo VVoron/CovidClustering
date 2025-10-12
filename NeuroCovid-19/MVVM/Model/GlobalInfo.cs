@@ -14,13 +14,9 @@ namespace NeuroCovid19.MVVM.Model
         public string Label { get; set; }
         public double Value { get; set; }
         public List<TableInfo> Table { get; set; }
-        public GlobalInfo(int index, int count, AvgCovidEars table)
+        public GlobalInfo(string clasterName, int index, int count, AvgCovidEars table)
         {
-            Label = (App.ContextOfData.SelectedMethod == Enumerations.Method.DBScan ?
-                   index.ToString() : (index + 1).ToString()) + " кластер";
-
-            if (App.ContextOfData.SelectedMethod == Enumerations.Method.DBScan && index == 0)
-                Label = "Шум";
+            Label = clasterName;
             Value = count;
             Table = new List<TableInfo>();
 

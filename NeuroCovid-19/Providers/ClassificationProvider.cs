@@ -130,7 +130,11 @@ namespace NeuroCovid19.Providers
                 }
             }
 
-            App.ContextOfData.ClassificationClasses = classificationClasses.Select(x => x.ToArray()).ToList();
+            App.ContextOfData.ClassificationClasses = classificationClasses.Select(x => new ClasterInfo()
+            {
+                Name = $"{classificationClasses.IndexOf(x) + 1} класс",
+                Items = x.ToArray()
+            }).ToList();
         }
     }
 }

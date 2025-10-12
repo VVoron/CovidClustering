@@ -12,7 +12,7 @@ namespace NeuroCovid19.Providers.ClasterisationProviders
 {
     public class KohanenProvider : IClasterisation
     {
-        public List<DataCOVIDEars[]> Clasters { get; set; }
+        public List<ClasterInfo> Clasters { get; set; }
         public KohanenProvider() { }
         public KohanenProvider(List<DataCOVIDEars> items, double[,] data)
         {
@@ -211,7 +211,11 @@ namespace NeuroCovid19.Providers.ClasterisationProviders
                 number++;
             }
 
-            Clasters = clasters.Where(x => x.Any()).Select(x => x.ToArray()).ToList();
+            Clasters = clasters.Where(x => x.Any()).Select(x => new ClasterInfo()
+            {
+                Name = $"{clasters.IndexOf(x) + 1} кластер",
+                Items = x.ToArray(),
+            }).ToList();
         }
 
         public bool CheckForError()
