@@ -18,6 +18,7 @@ namespace NeuroCovid19.Options
         public List<PropertiesModel> Properties { get; set; }
         public List<DataCOVIDEars[]> ClastersInfo { get; set; }
         public int SelectedClaster { get; set; }
+        public int SelectedClassificationClass { get; set; }
 
         public KohanenOptions()
         {

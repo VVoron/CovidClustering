@@ -25,7 +25,7 @@ namespace NeuroCovid19.MVVM.Model
         public double _otoacoustic_l_avarage { get; set; }
         public double _otoacoustic_l_num_nulls { get; set; }
         public double _otoacoustic_l_max { get; set; }
-        public double _otoacoustic_r_05_15 { get; set; }
+/*        public double _otoacoustic_r_05_15 { get; set; }
         public double _otoacoustic_r_15_25 { get; set; }
         public double _otoacoustic_r_25_35 { get; set; }
         public double _otoacoustic_r_35_45 { get; set; }
@@ -34,7 +34,7 @@ namespace NeuroCovid19.MVVM.Model
         public double _otoacoustic_l_15_25 { get; set; }
         public double _otoacoustic_l_25_35 { get; set; }
         public double _otoacoustic_l_35_45 { get; set; }
-        public double _otoacoustic_l_45_55 { get; set; }
+        public double _otoacoustic_l_45_55 { get; set; }*/
         //Assr
         public double _aSSR_r_05 { get; set; }
         public double _aSSR_r_1 { get; set; }
@@ -57,11 +57,12 @@ namespace NeuroCovid19.MVVM.Model
         public AvgCovidEars(DataCOVIDEars[] data, int index)
         {
             var clProvider = new ClasterisationProvider();
-            _name = App.ContextOfData.SelectedClasterisation != Enumerations.Clasterisation.DBScan ?
+            _name = App.ContextOfData.SelectedMethod != Enumerations.Method.DBScan ?
                     (index + 1).ToString() + " кластер" :
                     (index == 0 ? "Шум" : index.ToString() + " кластер");
-            var numsOfEachProp = new int[clProvider.PropertiesData().Count - 1];
+            var numsOfEachProp = new int[clProvider.PropertiesData().Count];
 
+            var props = typeof(DataCOVIDEars).GetProperties();
             foreach (var item in data)
             {
                 for (int i = 0; i < numsOfEachProp.Length; i++)
@@ -96,7 +97,7 @@ namespace NeuroCovid19.MVVM.Model
                                             _otoacoustic_l_avarage,
                                             _otoacoustic_l_num_nulls,
                                             _otoacoustic_l_max,
-                                            _otoacoustic_r_05_15,
+/*                                            _otoacoustic_r_05_15,
                                             _otoacoustic_r_15_25,
                                             _otoacoustic_r_25_35,
                                             _otoacoustic_r_35_45,
@@ -105,7 +106,7 @@ namespace NeuroCovid19.MVVM.Model
                                             _otoacoustic_l_15_25,
                                             _otoacoustic_l_25_35,
                                             _otoacoustic_l_35_45,
-                                            _otoacoustic_l_45_55,
+                                            _otoacoustic_l_45_55,*/
                                             _aSSR_r_05,
                                             _aSSR_r_1,
                                             _aSSR_r_2,

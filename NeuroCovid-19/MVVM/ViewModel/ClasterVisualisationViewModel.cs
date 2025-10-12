@@ -41,6 +41,14 @@ namespace NeuroCovid19.MVVM.ViewModel
             }
         }
 
+        public bool IsCustomTooltip
+        {
+            get
+            {
+                return App.ContextOfData.SelectedMethod != Enumerations.Method.Classification;
+            }
+        }
+
         private List<string> _clasteristationComboBox { get; set; }
         public object ClasterisationComboBox
         {
@@ -64,12 +72,13 @@ namespace NeuroCovid19.MVVM.ViewModel
             }
             set
             {
-                App.ContextOfData.SelectedClasterisation = (Enumerations.Clasterisation)value;
+                App.ContextOfData.SelectedMethod = (Enumerations.Method)value;
                 _selectedClasterisaton = (int)value;
                 SelectClastVM();
                 GraphMainChart();
                 ChangeSecondaryGraph();
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsCustomTooltip));
             }
         }
 
@@ -96,7 +105,7 @@ namespace NeuroCovid19.MVVM.ViewModel
 
                 PointsProperty.Add(new TableInfo
                 {
-                    propertyName = App.ContextOfData.SelectedClasterisation != Enumerations.Clasterisation.DBScan ? 
+                    propertyName = App.ContextOfData.SelectedMethod != Enumerations.Method.DBScan ? 
                                   (i + 1).ToString() + " кластер":
                                   (i == 0 ? "Шум" : i.ToString() + " кластер"),
                     propertyValue = (_selected_variant == 1) ? Dispersion(i, AvarageData[i].GetData()[(int)_select_property]) : AvarageData[i].GetData()[(int)_select_property]
@@ -161,13 +170,16 @@ namespace NeuroCovid19.MVVM.ViewModel
 
         private void SelectClastVM()
         {
-            switch (App.ContextOfData.SelectedClasterisation)
+            switch (App.ContextOfData.SelectedMethod)
             {
-                case Enumerations.Clasterisation.Kohanen:
+                case Enumerations.Method.Kohanen:
                     _clastersData = App.ContextOfData.KohanenOptions.ClastersInfo;
                     break;
-                case Enumerations.Clasterisation.DBScan:
+                case Enumerations.Method.DBScan:
                     _clastersData = App.ContextOfData.DBScanOptions.ClastersInfo;
+                    break;
+                case Enumerations.Method.Classification:
+                    _clastersData = App.ContextOfData.ClassificationClasses;
                     break;
                 default:
                     break;
@@ -180,8 +192,8 @@ namespace NeuroCovid19.MVVM.ViewModel
 
             Properties = new ObservableCollection<string>(new ClasterisationProvider().PropertiesData());
             AvarageData = new List<AvgCovidEars>();
-            SelectedClasterisation = (int)App.ContextOfData.SelectedClasterisation;
-            ClasterisationComboBox = new List<string>() { "Кохонен", "DBScan" };
+            SelectedClasterisation = (int)App.ContextOfData.SelectedMethod;
+            ClasterisationComboBox = new List<string>() { "Кохонен", "DBScan", "Классификация" };
             SelectClastVM();
             GraphMainChart();
         }

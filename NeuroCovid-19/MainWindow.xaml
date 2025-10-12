@@ -34,7 +34,7 @@
     </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Name="ButtonsColumn" Width="220"></ColumnDefinition>
+            <ColumnDefinition Name="ButtonsColumn" Width="240"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -135,11 +135,11 @@
                          model:BtnsImages.ImageSource="/Resources/Data.png"
                          Command="{Binding InputDataViewCommand}">
             </RadioButton>
-            <RadioButton Content="Процедура кластеризации"
+            <RadioButton Content="Параметры кластеризации"
                          Style="{StaticResource MenuBtnTheme}"
                          model:BtnsImages.ImageSource="/Resources/Settings.png"
                          Command="{Binding ClasterisationInfoViewCommand}"></RadioButton>
-            <RadioButton Content="Кластеры, информация о них"
+            <RadioButton Content="Кластеризация/Классификация"
                          model:BtnsImages.ImageSource="/Resources/Results.png"
                          Style="{StaticResource MenuBtnTheme}"
                          Command="{Binding OutputDataViewCommand}"></RadioButton>

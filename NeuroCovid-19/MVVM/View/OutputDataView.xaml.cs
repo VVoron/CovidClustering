@@ -1,7 +1,4 @@
 ﻿using NeuroCovid19.Functions;
-using NeuroCovid19.MVVM.Model;
-using NeuroCovid19.Functions;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -33,7 +30,7 @@ namespace NeuroCovid19.MVVM.View
 
             var clExt = new ClasterisationProvider();
 
-            if (index < 42)
+            if (index < 32)
             {
                 foreach (var list in clExt.colomnsToCheck)
                 {
@@ -53,11 +50,11 @@ namespace NeuroCovid19.MVVM.View
                                 Bindings =
                             {
                                 new Binding(e.PropertyName),
-                                new Binding("Time_observation"),
-                                new Binding("Time_gestagration"),
-                                (index <= 37) ? new Binding("KSVP_r_20") : new Binding("KSVP_l_20"),
-                                (index <= 37) ? new Binding("KSVP_r_40") : new Binding("KSVP_l_40"),
-                                (index <= 37) ? new Binding("KSVP_r_60") : new Binding("KSVP_l_60")
+                                new Binding("TimeObservation"),
+                                new Binding("TimeGestagration"),
+                                (index <= 27) ? new Binding("KsvpRight_20") : new Binding("KsvpLeft_20"),
+                                (index <= 27) ? new Binding("KsvpRight_40") : new Binding("KsvpLeft_40"),
+                                (index <= 27) ? new Binding("KsvpRight_60") : new Binding("KsvpLeft_60")
                             },
                                 Converter = new ThreeValuesToColorConverter(),
                                 ConverterParameter = index
@@ -71,8 +68,8 @@ namespace NeuroCovid19.MVVM.View
                                 Bindings =
                             {
                                 new Binding(e.PropertyName),
-                                new Binding("Time_observation"),
-                                new Binding("Time_gestagration"),
+                                new Binding("TimeObservation"),
+                                new Binding("TimeGestagration"),
                             },
                                 Converter = new ThreeValuesToColorConverter(),
                                 ConverterParameter = index
