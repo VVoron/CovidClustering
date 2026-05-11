@@ -1,27 +1,42 @@
-﻿using NeuroCovid19.MVVM.Model;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
+using NeuroCovid19.MVVM.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
-using OpenAI;
-using OpenAI.Chat;
-using System.ClientModel;
 
 namespace NeuroCovid19.Providers
 {
-    internal class AIAnalyzerProvider
+    internal class AIAnalyzerProvider: IDisposable
     {
-        private const string ApiUrl = "";
-        private const string ApiKey = "";
-        private const string ModelName = "DeepSeek-V4-Flash";
+        private readonly HttpClient _httpClient;
+        private const string BaseUrl = "http://127.0.0.1:8000";
+        private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(600);
 
         public AIAnalyzerProvider()
         {
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(BaseUrl),
+                Timeout = RequestTimeout
+            };
+        }
 
+        public AIAnalyzerProvider(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+            if (_httpClient.BaseAddress == null)
+            {
+                _httpClient.BaseAddress = new Uri(BaseUrl);
+            }
+            if (_httpClient.Timeout != RequestTimeout)
+            {
+                _httpClient.Timeout = RequestTimeout;
+            }
         }
 
         public async Task AnalyzeClustersAsync(List<ClasterInfo> clasters)
@@ -32,7 +47,7 @@ namespace NeuroCovid19.Providers
             {
                 var csvData = ConvertToCsv(claster);
 
-                var fullPrompt = $"""
+                var fullPrompt = $@"""
                 Задача: Проанализируй предоставленный датасет с данными детей.
                 Выполни детальный анализ, основанный на строгом сравнении слуховых показателей каждого ребенка с референтными значениями, зависящими от его возраста и срока гестации.
 
@@ -66,21 +81,21 @@ namespace NeuroCovid19.Providers
                 5) ОАЭ средняя или высокочастотная (средняя по референтным значениям) и ASSR (средняя) - выше 25 дБ и срок гестации больше 37 недель - Необходимо еще 1 раз пройти исследования слуховой функций 6 мес и при отсутствии улучшения или ухудшении показателей ASSR (пороги становятся еще выше), он направляется в Сурдологический центр.
                 6) ОАЭ низкоамплитудная (средняя по референтным значениям) и ASSR (средняя) - выше и ниже 25 дБ и срок гестации до 36 недель - Необходимо еще 2 раз пройти исследования слуховой функций до 9 мес. При отсутствии улучшения или ухудшении показателей ASSR (пороги становятся еще выше), дети направляются в Сурдологический центр.
 
-                В процессе анализа необходимо учесть, снижение и стабилизацию слуха у детей. Например: "В зависимости от возраста отмечается улучшение (ухудшение) показателей отоакустической эмиссии, и/или АССР.. За счёт увеличения (уменьшения, стабилизации) показателей отоакустической эмиссии, АССР".
+                В процессе анализа необходимо учесть, снижение и стабилизацию слуха у детей. Например: 'В зависимости от возраста отмечается улучшение (ухудшение) показателей отоакустической эмиссии, и/или АССР.. За счёт увеличения (уменьшения, стабилизации) показателей отоакустической эмиссии, АССР'.
 
                 В данных по каждому ребенку может присутствовать информация по возрасту на момент болезни, сроку беременности на момент болезни.
                 Необходимо учесть данные параметры в процессе анализа.
 
                 План анализа для каждого кластера:
                 1) Классификация: Для каждого ребенка определи статус каждого показателя (Норма, Отклонение, Данные отсутствуют) на основе сравнения его данных с референтными значениями, соответствующими его возрасту и сроку гестации.
-                2) Характеристика кластера: На основе классификации дай общую характеристику кластера. Является ли он условно-нормальным или проблемным? Опиши наиболее частые паттерны отклонений (например, "преобладают нарушения ОАЭ на высоких частотах").
+                2) Характеристика кластера: На основе классификации дай общую характеристику кластера. Является ли он условно-нормальным или проблемным? Опиши наиболее частые паттерны отклонений (например, 'преобладают нарушения ОАЭ на высоких частотах').
                 3) Анализ состава: Опиши демографический портрет кластера (распределение по возрасту, сроку гестации). Есть ли доминирующая группа?
                 4) Поиск зависимостей: Выяви и опиши взаимосвязи. Есть ли корреляция между отклонениями в слухе и параметрами ребенка (возраст, гестация)? Нарушения по одному показателю сочетаются с нарушениями по другому?
                 5) Итоговый вывод: Сформулируй структурированное резюме по кластеру: его условное название, ключевые findings и гипотезу о том, какую общую характеристику или проблему этот кластер иллюстрирует. Представь ответ в виде четкого отчета.
 
                 Важно описать о необходимостях проведения исследований слуха, направлении в Сурдологический центр.
 
-                Если в значениях возраста на момент болезни стоит 0 или "не число", значит ребенок не болел либо мать не болела ковидом.
+                Если в значениях возраста на момент болезни стоит 0 или 'не число', значит ребенок не болел либо мать не болела ковидом.
 
                 В ответе представь информацию в кратком виде по блокам:
                 1) Характеристика
@@ -122,26 +137,90 @@ namespace NeuroCovid19.Providers
         {
             try
             {
-                var client = new ChatClient(
-                    model: ModelName,
-                    credential: new ApiKeyCredential(ApiKey),
-                    options: new OpenAIClientOptions
-                    {
-                        Endpoint = new Uri(ApiUrl)
-                    }
+                var requestBody = new AnalyzeRequest { Prompt = prompt };
+                var jsonContent = new StringContent(
+                    JsonSerializer.Serialize(requestBody),
+                    Encoding.UTF8,
+                    "application/json"
                 );
 
-                var result = await client.CompleteChatAsync(prompt);
-                var message = result.Value.Content[0].Text;
+                var response = await _httpClient.PostAsync("/api/analyze", jsonContent);
+                response.EnsureSuccessStatusCode();
 
-                claster.DeepseekAnalysis = message;
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<AnalyzeResponse>(responseBody);
 
-                return message;
+                if (result != null && result.Success)
+                {
+                    claster.DeepseekAnalysis = result.Response;
+                    return result.Response;
+                }
+
+                var errorMessage = result?.Error ?? "Неизвестная ошибка при анализе кластера";
+                claster.DeepseekAnalysis = $"Ошибка анализа: {errorMessage}";
+                return $"Error: {errorMessage}";
+            }
+            catch (HttpRequestException ex)
+            {
+                var errorMsg = $"Сервер анализа недоступен ({BaseUrl}/api/analyze): {ex.Message}";
+                claster.DeepseekAnalysis = errorMsg;
+                return $"Error: {errorMsg}";
+            }
+            catch (TaskCanceledException)
+            {
+                var errorMsg = $"Превышен таймаут ожидания ответа от сервера анализа ({RequestTimeout.TotalSeconds} сек)";
+                claster.DeepseekAnalysis = errorMsg;
+                return $"Error: {errorMsg}";
+            }
+            catch (JsonException ex)
+            {
+                var errorMsg = $"Ошибка обработки ответа от сервера анализа: {ex.Message}";
+                claster.DeepseekAnalysis = errorMsg;
+                return $"Error: {errorMsg}";
             }
             catch (Exception ex)
             {
-                return $"Error: {ex.Message}";
+                var errorMsg = $"Неожиданная ошибка при анализе кластера: {ex.Message}";
+                claster.DeepseekAnalysis = errorMsg;
+                return $"Error: {errorMsg}";
             }
         }
+
+        public async Task<bool> CheckHealthAsync()
+        {
+            try
+            {
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                var response = await _httpClient.GetAsync("/api/health", cts.Token);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public void Dispose()
+        {
+            _httpClient?.Dispose();
+        }
+    }
+
+    internal class AnalyzeRequest
+    {
+        [JsonPropertyName("prompt")]
+        public string Prompt { get; set; } = string.Empty;
+    }
+
+    internal class AnalyzeResponse
+    {
+        [JsonPropertyName("success")]
+        public bool Success { get; set; }
+
+        [JsonPropertyName("response")]
+        public string? Response { get; set; }
+
+        [JsonPropertyName("error")]
+        public string? Error { get; set; }
     }
 }

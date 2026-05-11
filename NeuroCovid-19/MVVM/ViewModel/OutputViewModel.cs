@@ -244,7 +244,7 @@ namespace NeuroCovid19.MVVM.ViewModel
 
         private async Task FinalStageOfStudy(List<ClasterInfo> clasters)
         {
-            var analyzerProvider = new AIAnalyzerProvider();
+            using var analyzerProvider = new AIAnalyzerProvider();
             await analyzerProvider.AnalyzeClustersAsync(clasters);
 
             List<string> clastComboBox = new List<string>();
