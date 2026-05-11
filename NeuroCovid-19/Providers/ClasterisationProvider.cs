@@ -175,35 +175,35 @@ namespace NeuroCovid19.Providers
                 if (time_observ <= 3)
                 {
                     if (gestagration <= 28)
-                        return [0.65, 14.85];
+                        return [4.25, 8.5];
                     else if (gestagration <= 32)
-                        return [1.15, 13.35];
+                        return [6.5, 9.75];
                     else if (gestagration <= 36)
-                        return [2.94, 14.54];
+                        return [7.0, 9.25];
                     else
-                        return [2.6, 14.4];
+                        return [7.5, 11.5];
                 }
                 else if (time_observ <= 6)
                 {
                     if (gestagration <= 28)
-                        return [1.75, 12.55];
+                        return [7.4, 11.0];
                     else if (gestagration <= 32)
-                        return [2.45, 13.65];
+                        return [8.0, 10.5];
                     else if (gestagration <= 36)
-                        return [4.34, 15.14];
+                        return [8.5, 10.5];
                     else
-                        return [1.71, 14.91];
+                        return [5.25, 9.5];
                 }
                 else
                 {
                     if (gestagration <= 28)
-                        return [2.03, 14.63];
+                        return [9.0, 12.25];
                     else if (gestagration <= 32)
-                        return [2.86, 13.66];
+                        return [8.0, 10.75];
                     else if (gestagration <= 36)
-                        return [4.83, 15.23];
+                        return [9.0, 11.0];
                     else
-                        return [2.12, 14.92];
+                        return [7.0, 10.5];
                 }
             }
             if (colomnsToCheck[1].Contains(indexProp))

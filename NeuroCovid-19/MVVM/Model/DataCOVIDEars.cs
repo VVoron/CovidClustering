@@ -84,10 +84,10 @@ namespace NeuroCovid19.MVVM.Model
             OaeRight_6 = string.IsNullOrEmpty(array[12]) || array[12] == "0" ? Double.NaN : Convert.ToDouble(array[12]);
 
             var otoacusticData = new List<double>{
-                OaeRight_1,
-                OaeRight_2,
-                OaeRight_4,
-                OaeRight_6
+                OaeRight_1 <= 0.0 ? double.NaN : OaeRight_1,
+                OaeRight_2 <= 0.0 ? double.NaN : OaeRight_2,
+                OaeRight_4 <= 0.0 ? double.NaN : OaeRight_4,
+                OaeRight_6 <= 0.0 ? double.NaN : OaeRight_6
             };
             var notNull = otoacusticData.Where(x => !double.IsNaN(x));
             OaeRightAvarage = notNull.Any() ? Math.Round(notNull.Average(), 2) : Double.NaN;
@@ -99,10 +99,10 @@ namespace NeuroCovid19.MVVM.Model
             OaeLeft_1 = string.IsNullOrEmpty(array[15]) || array[15] == "0" ? Double.NaN : Convert.ToDouble(array[15]);
             OaeLeft_1 = string.IsNullOrEmpty(array[16]) || array[16] == "0" ? Double.NaN : Convert.ToDouble(array[16]);
             otoacusticData = new List<double>{
-                OaeLeft_1,
-                OaeLeft_2,
-                OaeLeft_4,
-                OaeLeft_6
+                OaeLeft_1 <= 0.0 ? double.NaN : OaeLeft_1,
+                OaeLeft_2 <= 0.0 ? double.NaN : OaeLeft_2,
+                OaeLeft_4 <= 0.0 ? double.NaN : OaeLeft_4,
+                OaeLeft_6 <= 0.0 ? double.NaN : OaeLeft_6
             };
             notNull = otoacusticData.Where(x => !double.IsNaN(x));
             OaeLeftAvarage = notNull.Any() ? Math.Round(notNull.Average(), 2) : Double.NaN;
@@ -274,34 +274,21 @@ namespace NeuroCovid19.MVVM.Model
             {
                 return
                     [
+                        TimeIll.ToString(),
+                        TimePregnancyIll.ToString(),
                         TimeGestagration.ToString(),
-                    TimeObservation.ToString(),
-                    OaeRight_1.ToString(),
-                    OaeRight_2.ToString(),
-                    OaeRight_4.ToString(),
-                    OaeRight_6.ToString(),
+                        TimeObservation.ToString(),
+                        OaeRightAvarage.ToString(),
+                        OaeRightMax.ToString(),
+                        OaeRightNumNulls.ToString(),
 
-                    OaeLeft_1.ToString(),
-                    OaeLeft_2.ToString(),
-                    OaeLeft_4.ToString(),
-                    OaeLeft_6.ToString(),
+                        OaeLeftAvarage.ToString(),
+                        OaeLeftMax.ToString(),
+                        OaeLeftNumNulls.ToString(),
 
-                    AssrRight_05.ToString(),
-                    AssrRight_1.ToString(),
-                    AssrRight_2.ToString(),
-                    AssrRight_4.ToString(),
+                        AssrRight_avarage.ToString(),
 
-                    AssrLeft_05.ToString(),
-                    AssrLeft_1.ToString(),
-                    AssrLeft_2.ToString(),
-                    AssrLeft_4.ToString(),
-
-                    KsvpRight_20.ToString(),
-                    KsvpRight_40.ToString(),
-                    KsvoRight_60.ToString(),
-                    KsvpLeft_20.ToString(),
-                    KsvpLeft_40.ToString(),
-                    KsvpLeft_60.ToString()
+                        AssrLeft_avarage.ToString(),
                     ];
             }
         }
