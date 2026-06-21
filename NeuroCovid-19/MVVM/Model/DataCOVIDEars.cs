@@ -268,12 +268,7 @@ namespace NeuroCovid19.MVVM.Model
             };
         }
 
-        public string[] DataForAI
-        {
-            get
-            {
-                return
-                    [
+        public string[] DataForAI() => [
                         TimeIll.ToString(),
                         TimePregnancyIll.ToString(),
                         TimeGestagration.ToString(),
@@ -290,8 +285,6 @@ namespace NeuroCovid19.MVVM.Model
 
                         AssrLeft_avarage.ToString(),
                     ];
-            }
-        }
 
         public int GetAnomalyClass()
         {

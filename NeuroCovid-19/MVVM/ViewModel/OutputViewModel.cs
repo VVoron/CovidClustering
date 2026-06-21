@@ -30,6 +30,29 @@ namespace NeuroCovid19.MVVM.ViewModel
         public RelayCommand GetReportOutput { get; set; }
         public RelayCommand RelayAIData { get; set; }
         private DataCOVIDEars[]? _data { get; set; }
+
+        public bool IsAiAnalysisRunning
+        {
+            get => _isAiAnalysisRunning;
+            set
+            {
+                _isAiAnalysisRunning = value;
+                OnPropertyChanged();
+            }
+        }
+        private bool _isAiAnalysisRunning;
+
+        public string AiAnalysisStatus
+        {
+            get => _aiAnalysisStatus;
+            set
+            {
+                _aiAnalysisStatus = value;
+                OnPropertyChanged();
+            }
+        }
+        private string _aiAnalysisStatus = string.Empty;
+
         public object Load
         {
             get { return _load; }
@@ -244,9 +267,6 @@ namespace NeuroCovid19.MVVM.ViewModel
 
         private async Task FinalStageOfStudy(List<ClasterInfo> clasters)
         {
-            using var analyzerProvider = new AIAnalyzerProvider();
-            await analyzerProvider.AnalyzeClustersAsync(clasters);
-
             List<string> clastComboBox = new List<string>();
             for (int i = 0; i < clasters.Count; i++)
             {
@@ -264,6 +284,28 @@ namespace NeuroCovid19.MVVM.ViewModel
                 clastComboBox.Add($"{i + 1} класс");
             }
             _clasterComboBox = clastComboBox;
+            _ = RunAiAnalysisInBackgroundAsync(clasters);
+        }
+
+        private async Task RunAiAnalysisInBackgroundAsync(List<ClasterInfo> clasters)
+        {
+            IsAiAnalysisRunning = true;
+            AiAnalysisStatus = "ИИ анализирует кластеры...";
+
+            try
+            {
+                using var analyzerProvider = new AIAnalyzerProvider();
+                await analyzerProvider.AnalyzeClustersAsync(clasters);
+                AiAnalysisStatus = "Анализ ИИ завершён";
+            }
+            catch (Exception ex)
+            {
+                AiAnalysisStatus = $"Ошибка анализа ИИ: {ex.Message}";
+            }
+            finally
+            {
+                IsAiAnalysisRunning = false;
+            }
         }
 
         private double[,] GetWCoefs(int countProps)
@@ -467,23 +509,26 @@ namespace NeuroCovid19.MVVM.ViewModel
             RelayAIData = new RelayCommand(x =>
             {
                 string aiData = string.Empty;
+                string subtitle = string.Empty;
 
                 try
                 {
-
                     switch ((Method)_selectedClasterisaton)
                     {
                         case Method.Kohanen:
                             App.ContextOfData.KohanenOptions.SelectedClaster = _selectedClaster;
                             aiData = App.ContextOfData.KohanenOptions.ClastersInfo[_selectedClaster].DeepseekAnalysis;
+                            subtitle = $"Кохонен — {App.ContextOfData.KohanenOptions.ClastersInfo[_selectedClaster].Name}";
                             break;
                         case Method.DBScan:
                             App.ContextOfData.DBScanOptions.SelectedClaster = _selectedClaster;
                             aiData = App.ContextOfData.DBScanOptions.ClastersInfo[_selectedClaster].DeepseekAnalysis;
+                            subtitle = $"DBScan — {App.ContextOfData.DBScanOptions.ClastersInfo[_selectedClaster].Name}";
                             break;
                         case Method.Classification:
                             App.ContextOfData.SelectedClass = _selectedClaster;
                             aiData = App.ContextOfData.ClassificationClasses[_selectedClaster].DeepseekAnalysis;
+                            subtitle = $"Классификация — {App.ContextOfData.ClassificationClasses[_selectedClaster].Name}";
                             break;
                         default:
                             break;
@@ -494,7 +539,12 @@ namespace NeuroCovid19.MVVM.ViewModel
                         throw new Exception("No data");
                     }
 
-                    MessageBox.Show(aiData, "Характеристика от ИИ", MessageBoxButton.OK, MessageBoxImage.Information);
+                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var window = new AiAnalysisWindow(aiData, subtitle);
+                        window.Owner = System.Windows.Application.Current.MainWindow;
+                        window.ShowDialog();
+                    });
                 }
                 catch (Exception ex)
                 {

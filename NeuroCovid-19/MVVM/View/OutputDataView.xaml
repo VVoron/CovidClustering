@@ -12,6 +12,7 @@
     </UserControl.DataContext>
     <UserControl.Resources>
         <func:ThreeValuesToColorConverter x:Key="ThreeValuesToColorConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid>
@@ -150,6 +151,21 @@
                 <Button Content="Сделать выборку исходной" Command="{Binding ChangeInitDataByClaster}"/>
                 <Button Content="Выгрузить данные в файл" Command="{Binding GetExcelOutput}"/>
                 <Button Content="Выгрузить отчет" Command="{Binding GetReportOutput}"/>
+                <Separator/>
+
+                <Border Visibility="{Binding IsAiAnalysisRunning, Converter={StaticResource BoolToVisConverter}}"
+                        Background="#FFF3CD"
+                        BorderBrush="#FFE0A0"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="8,2"
+                        Margin="4,0,0,0"
+                        VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⏳" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding AiAnalysisStatus}" VerticalAlignment="Center" FontSize="12" Foreground="#856404"/>
+                    </StackPanel>
+                </Border>
             </ToolBar>
         </Grid>
     </Grid>

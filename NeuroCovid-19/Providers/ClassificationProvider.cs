@@ -93,11 +93,6 @@ namespace NeuroCovid19.Providers
             return resultMetrics;
         }
 
-        public bool IsModelPretrained()
-        {
-            return _isPretrained;
-        }
-
         public void DoClassificationForData(List<DataCOVIDEars> items)
         {
             var classificationClasses = new List<List<DataCOVIDEars>>()

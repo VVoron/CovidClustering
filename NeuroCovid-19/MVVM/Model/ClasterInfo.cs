@@ -34,7 +34,7 @@ namespace NeuroCovid19.MVVM.Model
                         "ASSR правого уха (среднее)",
                         "ASSR левого уха (среднее)",
                 ],
-                Items.Select(x => x.DataForAI).ToList()
+                Items.Select(x => x.DataForAI()).ToList()
             );
         }
     }

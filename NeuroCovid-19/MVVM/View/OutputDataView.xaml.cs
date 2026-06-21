@@ -30,7 +30,7 @@ namespace NeuroCovid19.MVVM.View
 
             var clExt = new ClasterisationProvider();
 
-            if (index < 32)
+            if (index < colomnsData.Count())
             {
                 foreach (var list in clExt.colomnsToCheck)
                 {
@@ -44,7 +44,7 @@ namespace NeuroCovid19.MVVM.View
                         column.CellStyle = new Style(typeof(DataGridCell));
                         if (list.Count == 3)
                         {
-                            
+
                             column.CellStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, new MultiBinding()
                             {
                                 Bindings =

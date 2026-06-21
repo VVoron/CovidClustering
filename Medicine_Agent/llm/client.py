@@ -57,6 +57,7 @@ class LLMClient:
         messages: List[Message],
         stream: bool = False,
         on_chunk: Optional[Callable[[str], None]] = None,
+        use_tools: bool = True,
     ) -> LLMResponse:
         """Send a chat completion request.
 
@@ -64,6 +65,8 @@ class LLMClient:
             messages: List of conversation messages
             stream: Whether to stream the response
             on_chunk: Callback for streaming chunks
+            use_tools: If False, send request without tool definitions
+                (useful for final answer generation after max iterations)
 
         Returns:
             LLMResponse with content and/or tool calls
@@ -73,7 +76,7 @@ class LLMClient:
 
         for attempt in range(max_retries):
             try:
-                return await asyncio.to_thread(self._make_request, messages, stream, on_chunk)
+                return await asyncio.to_thread(self._make_request, messages, stream, on_chunk, use_tools)
             except RateLimitError as e:
                 last_error = e
                 wait_time = 2 ** attempt
@@ -94,6 +97,7 @@ class LLMClient:
         messages: List[Message],
         stream: bool,
         on_chunk: Optional[Callable[[str], None]],
+        use_tools: bool = True,
     ) -> LLMResponse:
         """Make the actual API request."""
         openai_messages = [m.to_openai_dict() for m in messages]
@@ -106,7 +110,7 @@ class LLMClient:
             "stream": stream,
         }
 
-        if self._tools:
+        if self._tools and use_tools:
             kwargs["tools"] = self._tools
             kwargs["tool_choice"] = "auto"
 

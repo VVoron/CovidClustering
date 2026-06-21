@@ -179,6 +179,28 @@ class ReActAgent:
                         tool_call_id=tool_call.id,
                         name=tool_name,
                     ))
+
+                if iteration == self.config.max_iterations - 1:
+                    logger.info("Max iterations reached with tool calls. Requesting final answer without tools.")
+
+                    messages.append(Message.user(
+                        "На основе полученных результатов поиска сформируй финальный ответ (Final Answer). "
+                        "Не используй инструменты. Ответ должен быть на русском языке."
+                    ))
+
+                    final_response = await self.llm.chat(messages, use_tools=False)
+                    if final_response.content:
+                        if "Final Answer:" in final_response.content:
+                            final_answer = self._extract_final_answer(final_response.content)
+                        else:
+                            final_answer = final_response.content.strip()
+                        logger.info("Agent produced final answer after max iterations")
+                        return final_answer
+                    else:
+                        return (
+                            f"Достигнут лимит итераций ({self.config.max_iterations}). "
+                            f"Пожалуйста, уточните вопрос или попробуйте разбить его на части."
+                        )
             else:
                 # No tool calls and no final answer
                 if response.content:
@@ -199,8 +221,7 @@ class ReActAgent:
                 else:
                     return "Не удалось получить ответ. Пожалуйста, попробуйте переформулировать вопрос."
 
-        # Max iterations reached
-        logger.warning(f"Max iterations ({self.config.max_iterations}) reached")
+        logger.warning(f"Max iterations ({self.config.max_iterations}) reached without tool calls on last step")
         return (
             f"Достигнут лимит итераций ({self.config.max_iterations}). "
             f"Пожалуйста, уточните вопрос или попробуйте разбить его на части."
